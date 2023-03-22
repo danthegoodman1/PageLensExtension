@@ -37,10 +37,6 @@ const manifest: Manifest.WebExtensionManifest = {
       matches: [],
     },
   ],
-  permissions: [
-    "activeTab",
-    "tabs"
-  ],
 };
 
 export default manifest;
