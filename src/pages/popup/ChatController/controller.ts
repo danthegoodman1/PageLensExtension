@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto"
 import Browser from "webextension-polyfill"
 
 export interface ModelModule {
@@ -16,23 +17,22 @@ export interface ModelModule {
 }
 
 export interface ChatControllerOptions {
-  history?: ChatHistory
+  transcript?: ChatTranscript
 }
 
 export interface ChatMessage {
   author: "user" | "ai"
   message: string
   created: Date
+  vote?: "up" | "down"
+  hidden?: boolean
   [key: string]: any
 }
 
 export interface ChatTranscript {
   initialPrompt?: string
   messages: ChatMessage[]
-}
-
-export interface ChatHistory {
-  messages: ChatMessage[]
+  id: string
   created: Date
   lastUpdated: Date
 }
@@ -40,10 +40,8 @@ export interface ChatHistory {
 export class ChatController {
 
   opts?: ChatControllerOptions
-  transcript: ChatTranscript = { messages: [] }
+  transcript: ChatTranscript = { messages: [], created: new Date(), lastUpdated: new Date(), id: randomUUID() }
   canStreamMessages = false
-  created = new Date()
-  lastUpdated = new Date()
   module: ModelModule
   moduleKey?: string
 
@@ -52,10 +50,8 @@ export class ChatController {
   constructor(module: ModelModule, opts?: ChatControllerOptions) {
     this.module = module
     this.opts = opts
-    if (this.opts?.history) {
-      this.transcript.messages = this.opts.history.messages
-      this.created = this.opts.history.created
-      this.lastUpdated = this.opts.history.lastUpdated
+    if (this.opts?.transcript) {
+      this.transcript = this.opts.transcript
     }
   }
 
@@ -65,6 +61,16 @@ export class ChatController {
    * @returns The final chat message
    */
   async SendMessage(message: string) {
+    if (this.transcript.messages.length === 0) {
+      // TODO: Fetch initial page content
+      const pageContent = ""
+      this.transcript.messages.push({
+        hidden: true,
+        author: "user",
+        created: new Date(),
+        message: `${this.transcript.initialPrompt || ""}${pageContent}`
+      })
+    }
     this.transcript.messages.push({
       author: "user",
       created: new Date(),
@@ -91,10 +97,10 @@ export class ChatController {
   }
 
   /**
-   * Gets the storage key from local storage
+   * Gets the storage key from sync storage
    */
   async loadKey() {
-    const key = await Browser.storage.local.get(this.module.storageKey)
+    const key = await Browser.storage.sync.get(this.module.storageKey)
     this.moduleKey = key[this.module.storageKey]
   }
 }
