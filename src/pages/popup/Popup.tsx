@@ -2,8 +2,11 @@ import React, { useEffect } from 'react';
 import logo from '@assets/img/logo.svg';
 import Browser from 'webextension-polyfill';
 import ListChats from './views/ListChats';
+import { useApp } from './Context';
 
 export default function Popup(): JSX.Element {
+
+  const { view, setView } = useApp()
 
   const sendMsg = async () => {
     let queryOptions = { active: true, currentWindow: true };
@@ -13,9 +16,17 @@ export default function Popup(): JSX.Element {
     console.log("got response", res)
   }
 
+  function handleNewChat(modelName?: string) {
+    setView("new chat")
+  }
+
+  function handleOpenChat(chatID?: string) {
+    setView("chat")
+  }
+
   return (
     <div className="flex grow w-screen h-screen">
-      <ListChats />
+      {view === "list chats" && <ListChats onSelectChat={handleOpenChat} onNewChat={handleNewChat} />}
     </div>
   );
 }
