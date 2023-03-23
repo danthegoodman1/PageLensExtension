@@ -8,7 +8,8 @@ export default function Popup(): JSX.Element {
     let queryOptions = { active: true, currentWindow: true };
     let tab = await Browser.tabs.query(queryOptions);
     console.log("tab", tab)
-    Browser.tabs.sendMessage(tab[0].id!, "sent from popup")
+    const res = await Browser.tabs.sendMessage(tab[0].id!, "sent from popup")
+    console.log("got response", res)
   }
 
   return (
