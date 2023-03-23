@@ -3,6 +3,7 @@ import logo from '@assets/img/logo.svg';
 import Browser from 'webextension-polyfill';
 import ListChats from './views/ListChats';
 import { useApp } from './Context';
+import NewModel from './views/NewModel';
 
 export default function Popup(): JSX.Element {
 
@@ -23,10 +24,14 @@ export default function Popup(): JSX.Element {
   function handleOpenChat(chatID?: string) {
     setView("chat")
   }
+  function handleNewModel() {
+    setView("new model")
+  }
 
   return (
     <div className="flex grow w-screen h-screen">
-      {view === "list chats" && <ListChats onSelectChat={handleOpenChat} onNewChat={handleNewChat} />}
+      {view === "list chats" && <ListChats onNewModel={handleNewModel} onSelectChat={handleOpenChat} onNewChat={handleNewChat} />}
+      {view === "new model" && <NewModel onSetView={(v) => setView(v)} />}
     </div>
   );
 }

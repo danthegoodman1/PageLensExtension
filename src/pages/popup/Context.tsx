@@ -3,7 +3,7 @@ import { useState, createContext, useContext } from 'react';
 
 export type Platform = 'twitch' | 'multi';
 
-export type ViewType = "list chats" | "new chat" | "chat" | "list models" | "add model"
+export type ViewType = "list chats" | "new chat" | "chat" | "list models" | "new model"
 
 // ** Create Context
 export type AppContextType = {

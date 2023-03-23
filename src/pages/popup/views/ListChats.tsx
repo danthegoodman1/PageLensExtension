@@ -5,9 +5,10 @@ import * as Tooltip from '@radix-ui/react-tooltip'
 export interface ListChatsProps {
   onSelectChat: (chatID: string) => void
   onNewChat: (modelName?: string) => void
+  onNewModel: () => void
 }
 
-export default function ListChats({ onNewChat, onSelectChat }: ListChatsProps) {
+export default function ListChats({ onNewChat, onSelectChat, onNewModel }: ListChatsProps) {
 
   const [search, setSearch] = useState("")
 
@@ -34,7 +35,7 @@ export default function ListChats({ onNewChat, onSelectChat }: ListChatsProps) {
           <Tooltip.Provider delayDuration={300}>
             <Tooltip.Root>
               <Tooltip.Trigger asChild>
-                <button className="IconButton">
+                <button onClick={() => onNewModel()} className="IconButton">
                   <PlusCircle size={48} className="text-black cursor-pointer" strokeWidth={1} />
                 </button>
               </Tooltip.Trigger>
