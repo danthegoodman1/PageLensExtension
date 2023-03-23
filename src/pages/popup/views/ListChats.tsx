@@ -1,0 +1,143 @@
+import { useState } from "react"
+import { Search, PlusCircle, Edit } from "react-feather"
+import * as Tooltip from '@radix-ui/react-tooltip'
+
+export default function ListChats() {
+
+  const [search, setSearch] = useState("")
+
+  return (
+    <div className="w-full flex grow shrink-0 flex-col px-2 py-1 justify-between">
+      <div>
+
+        <div className="flex flex-row mb-4">
+          <h1 className="text-2xl font-bold">Chats</h1>
+        </div>
+
+        {/* Search Bar */}
+        <div className="flex flex-row mb-4 relative border-solid border-2 border-red-500">
+          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            {/* <svg className="w-5 h-5 text-gray-500 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd"
+                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                clip-rule="evenodd"></path>
+            </svg> */}
+            <Search size={16} className="text-gray-400" />
+          </div>
+          <input value={search} onChange={(e) => {
+            setSearch(e.target.value)
+          }} type="text" id="table-search" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mr-2" placeholder="Search for chats" />
+          <Tooltip.Provider delayDuration={300}>
+            <Tooltip.Root>
+              <Tooltip.Trigger asChild>
+                <button className="IconButton">
+                  <Edit size={24} className="text-black cursor-pointer" strokeWidth={1.5} />
+                </button>
+              </Tooltip.Trigger>
+              <Tooltip.Portal>
+                <Tooltip.Content className="TooltipContent bg-slate-300 rounded-md p-1" sideOffset={5}>
+                  New chat
+                  <Tooltip.Arrow className="TooltipArrow fill-slate-300" />
+                </Tooltip.Content>
+              </Tooltip.Portal>
+            </Tooltip.Root>
+          </Tooltip.Provider>
+        </div>
+
+        {/* Quick start chat */}
+        <div className="flex flex-row mb-4 items-center align-middle gap-2">
+          <Tooltip.Provider delayDuration={300}>
+            <Tooltip.Root>
+              <Tooltip.Trigger asChild>
+                <button className="IconButton">
+                  <PlusCircle size={48} className="text-black cursor-pointer" strokeWidth={1} />
+                </button>
+              </Tooltip.Trigger>
+              <Tooltip.Portal>
+                <Tooltip.Content className="TooltipContent bg-slate-300 rounded-md p-1" sideOffset={5}>
+                  Add new model
+                  <Tooltip.Arrow className="TooltipArrow fill-slate-300" />
+                </Tooltip.Content>
+              </Tooltip.Portal>
+            </Tooltip.Root>
+          </Tooltip.Provider>
+
+          <Tooltip.Provider delayDuration={300}>
+            <Tooltip.Root>
+              <Tooltip.Trigger asChild>
+                <button className="IconButton">
+                  <div className="h-[42px] w-[42px] rounded-full cursor-pointer bg-indigo-500"></div>
+                </button>
+              </Tooltip.Trigger>
+              <Tooltip.Portal>
+                <Tooltip.Content className="TooltipContent bg-slate-300 rounded-md p-1" sideOffset={5}>
+                  Start chat with indigo
+                  <Tooltip.Arrow className="TooltipArrow fill-slate-300" />
+                </Tooltip.Content>
+              </Tooltip.Portal>
+            </Tooltip.Root>
+          </Tooltip.Provider>
+
+          <Tooltip.Provider delayDuration={300}>
+            <Tooltip.Root>
+              <Tooltip.Trigger asChild>
+                <button className="IconButton">
+                  <div className="h-[42px] w-[42px] rounded-full cursor-pointer bg-emerald-500"></div>
+                </button>
+              </Tooltip.Trigger>
+              <Tooltip.Portal>
+                <Tooltip.Content className="TooltipContent bg-slate-300 rounded-md p-1" sideOffset={5}>
+                  Start chat with emerald
+                  <Tooltip.Arrow className="TooltipArrow fill-slate-300" />
+                </Tooltip.Content>
+              </Tooltip.Portal>
+            </Tooltip.Root>
+          </Tooltip.Provider>
+
+          <Tooltip.Provider delayDuration={300}>
+            <Tooltip.Root>
+              <Tooltip.Trigger asChild>
+                <button className="IconButton">
+                  <div className="h-[42px] w-[42px] rounded-full cursor-pointer bg-orange-500"></div>
+                </button>
+              </Tooltip.Trigger>
+              <Tooltip.Portal>
+                <Tooltip.Content className="TooltipContent bg-slate-300 rounded-md p-1" sideOffset={5}>
+                  Start chat with orange
+                  <Tooltip.Arrow className="TooltipArrow fill-slate-300" />
+                </Tooltip.Content>
+              </Tooltip.Portal>
+            </Tooltip.Root>
+          </Tooltip.Provider>
+        </div>
+
+        {/* Chats list */}
+        <div className="flex flex-col mb-4 gap-1">
+
+          <div className="cursor-pointer flex flex-row mb-2 bg-slate-200 rounded-md px-2 py-3 justify-start items-center gap-1">
+            <div className="h-[42px] w-[42px] rounded-full bg-orange-500 shrink-0"></div>
+            <div className="flex flex-col shrink min-w-0">
+              <p className="text-xs font-semibold text-gray-400">Mar 23rd</p>
+              <p className="text-sm truncate w-full text-gray-500">Blah blah blah Blah blah blah Blah blah blah Blah blah blahBlah blah blahBlah blah blah </p>
+            </div>
+          </div>
+          <div className="cursor-pointer  flex flex-row mb-2 bg-slate-200 rounded-md px-2 py-3 justify-start items-center gap-1">
+            <div className="h-[42px] w-[42px] rounded-full bg-orange-500 shrink-0"></div>
+            <div className="flex flex-col shrink min-w-0">
+              <p className="text-xs font-semibold text-gray-400">Mar 23rd</p>
+              <p className="text-sm truncate w-full text-gray-500">Blah blah blah Blah blah blah Blah blah blah Blah blah blahBlah blah blahBlah blah blah </p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div id="me" className=" cursor-pointer flex flex-row mb-2 rounded-md p-2 justify-center items-center gap-2 justify-self-end place-items-end border-solid border-black border-2">
+        <PlusCircle size={32} className="text-black cursor-pointer" strokeWidth={1.5} />
+        <p className="text-lg font-medium">New chat</p>
+      </div>
+
+    </div>
+  )
+}
