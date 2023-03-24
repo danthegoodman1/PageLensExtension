@@ -12,13 +12,27 @@ export interface ModelModule {
 }
 
 export interface ChatControllerOptions {
-  session?: ChatSession
+  sessionID?: string
+  url: string
 }
 
 export interface ChatMessage {
   author: "user" | "ai"
-  message: string
-  created: Date
+  /**
+   * Message components to join for a single message
+   */
+  message: {
+    /**
+     * The message content
+     */
+    content: string
+    /**
+     * Whether this should be visually hidden, used for highlighted regions
+     */
+    hidden?: boolean
+    kind: "input" | "highlight" | "initial prompt" | "response"
+  }[]
+  created: number
   vote?: "up" | "down"
   hidden?: boolean
   [key: string]: any
@@ -28,25 +42,35 @@ export interface ChatSession {
   initialPrompt?: string
   messages: ChatMessage[]
   id: string
-  created: Date
-  lastUpdated: Date
+  created: number
+  lastUpdated: number
+  url: string
 }
 
 export class ChatController {
 
-  opts?: ChatControllerOptions
-  session: ChatSession = { messages: [], created: new Date(), lastUpdated: new Date(), id: window.crypto.randomUUID() }
+  opts: ChatControllerOptions
+  session: ChatSession
   module: ModelModule
   moduleKey?: string
 
-  sessionUpdated?: (transcript: ChatSession) => void
+  incomingMessageUpdated?: (message: ChatMessage) => void
 
-  constructor(module: ModelModule, opts?: ChatControllerOptions) {
+  constructor(module: ModelModule, opts: ChatControllerOptions) {
     this.module = module
     this.opts = opts
-    if (this.opts?.session) {
-      this.session = this.opts.session
+
+    this.session = { messages: [], created: new Date().getTime(), lastUpdated: new Date().getTime(), id: window.crypto.randomUUID(), url: opts.url }
+  }
+
+  async loadSession(sessionID: string) {
+    const sessionKey = `chat_${this.session.id}`
+    const existingSession = await Browser.storage.local.get(sessionKey)
+    if (!existingSession) {
+      console.error("did not find existing session!")
+      return
     }
+    this.session = existingSession[sessionKey]
   }
 
   /**
@@ -54,36 +78,49 @@ export class ChatController {
    * @argument onProgress a callback that will be invoked for every update if `moduile.canStreamMessages = true`.
    * @returns The final chat message
    */
-  async SendMessage(message: string) {
+  async SendMessage(message: string): Promise<ChatSession> {
     if (this.session.messages.length === 0) {
       // TODO: Fetch initial page content
       const pageContent = ""
       this.session.messages.push({
         hidden: true,
         author: "user",
-        created: new Date(),
-        message: `${this.session.initialPrompt || ""}${pageContent}`
+        created: new Date().getTime(),
+        message: [
+          {
+            content: `${this.session.initialPrompt || ""}${pageContent}`,
+            kind: "initial prompt"
+          }
+        ]
       })
     }
+    // TODO: Check if a region is highlighted, include it, and omit in prompt? Or format fancy
     this.session.messages.push({
       author: "user",
-      created: new Date(),
-      message
+      created: new Date().getTime(),
+      message: [{
+        content: message,
+        kind: "input"
+      }]
     })
     let response: ChatMessage = {
       author: "ai",
-      created: new Date(),
-      message: ""
+      created: new Date().getTime(),
+      message: [{
+        content: "",
+        kind: "response"
+      }]
     }
     this.session.messages.push(response)
-    response.message = await this.module.submitChat((progress) => {
-      response.message = progress
-      if (this.sessionUpdated) // send the update if we have the function
-        this.sessionUpdated(this.session)
+    response.message[0].content = await this.module.submitChat((progress) => {
+      response.message[0].content = progress
+      if (this.incomingMessageUpdated) // send the update if we have the function
+        this.incomingMessageUpdated(response)
     })
-    if (this.sessionUpdated) // send the update if we have the function
-      this.sessionUpdated(this.session)
+    if (this.incomingMessageUpdated) // send the update if we have the function
+      this.incomingMessageUpdated(response)
     this.saveSession()
+    return this.session
   }
 
   /**
