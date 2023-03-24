@@ -12,7 +12,6 @@ export interface ModelModule {
 }
 
 export interface ChatControllerOptions {
-  sessionID?: string
   url: string
 }
 

@@ -1,14 +1,19 @@
 import { useEffect, useRef, useState } from "react"
 import { ChatController, ChatControllerOptions, ChatMessage, ChatSession, ModelModule } from "./controller"
 
-export function useChatController(modelModule: ModelModule, opts: ChatControllerOptions) {
+export function useChatController(modelModule: ModelModule, opts: {
+  sessionID?: string
+  url: string
+}) {
   const [isReceivingMessage, setIsReceivingMessage] = useState(false)
   const [session, setSession] = useState<ChatSession | undefined>()
   const [sessionReady, setSessionready] = useState(false)
   const [incomingMessage, setIncomingMessage] = useState<ChatMessage | undefined>()
   const [messageError, setMessageError] = useState<Error | undefined>()
 
-  const controller = useRef(new ChatController(modelModule, opts))
+  const controller = useRef(new ChatController(modelModule, {
+    url: opts.url
+  }))
   controller.current.incomingMessageUpdated = (message) => {
     setIncomingMessage(message)
   }
