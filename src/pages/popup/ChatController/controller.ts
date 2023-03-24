@@ -79,6 +79,8 @@ export class ChatController {
     this.session.messages.push(response)
     response.message = await this.module.submitChat((progress) => {
       response.message = progress
+      if (this.sessionUpdated) // send the update if we have the function
+        this.sessionUpdated(this.session)
     })
     if (this.sessionUpdated) // send the update if we have the function
       this.sessionUpdated(this.session)
