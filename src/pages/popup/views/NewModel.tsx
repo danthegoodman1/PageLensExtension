@@ -2,7 +2,7 @@ import * as Tooltip from "@radix-ui/react-tooltip"
 import { useState } from "react"
 import { ArrowLeft, Info } from "react-feather"
 import ProgressBar from "../Components/ProgressBar"
-import { ViewType } from "../Context"
+import { useApp, ViewType } from "../Context"
 import { ModelDefinition, ModelDefinitions, ModelType, ModelTypes, putModel, StoredModel } from "../models"
 
 export interface NewModelProps {
@@ -13,9 +13,11 @@ export interface NewModelProps {
 export default function NewModel({ onSetView, models }: NewModelProps) {
 
   const [addingModel, setAddingModel] = useState<ModelType | undefined>()
+  const { reloadModels } = useApp()
 
   function onAddModel() {
-    
+    reloadModels()
+    onSetView("list chats")
   }
 
   return (

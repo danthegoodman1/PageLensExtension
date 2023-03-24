@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react"
 import { Search, PlusCircle } from "react-feather"
 import * as Tooltip from '@radix-ui/react-tooltip'
-import { getModels, StoredModel } from "../models"
+import { getModels, ModelDefinitions, StoredModel } from "../models"
+import { useApp } from "../Context"
 
 export interface ListChatsProps {
   onSelectChat: (chatID: string) => void
@@ -12,6 +13,7 @@ export interface ListChatsProps {
 export default function ListChats({ onNewChat, onSelectChat, onNewModel }: ListChatsProps) {
 
   const [search, setSearch] = useState("")
+  const { models } = useApp()
 
   return (
     <div className="w-full flex grow shrink-0 flex-col px-2 py-1 justify-between">
@@ -49,53 +51,25 @@ export default function ListChats({ onNewChat, onSelectChat, onNewModel }: ListC
             </Tooltip.Root>
           </Tooltip.Provider>
 
-          <Tooltip.Provider delayDuration={300}>
-            <Tooltip.Root>
-              <Tooltip.Trigger asChild>
-                <button className="IconButton">
-                  <div className="h-[42px] w-[42px] rounded-xl cursor-pointer bg-indigo-500"></div>
-                </button>
-              </Tooltip.Trigger>
-              <Tooltip.Portal>
-                <Tooltip.Content className="TooltipContent border-solid border-2 border-black bg-white rounded-md p-1" sideOffset={5}>
-                  Chat with indigo
-                  <Tooltip.Arrow className="TooltipArrow fill-black" />
-                </Tooltip.Content>
-              </Tooltip.Portal>
-            </Tooltip.Root>
-          </Tooltip.Provider>
-
-          <Tooltip.Provider delayDuration={300}>
-            <Tooltip.Root>
-              <Tooltip.Trigger asChild>
-                <button className="IconButton">
-                  <div className="h-[42px] w-[42px] rounded-xl cursor-pointer bg-emerald-500"></div>
-                </button>
-              </Tooltip.Trigger>
-              <Tooltip.Portal>
-                <Tooltip.Content className="TooltipContent border-solid border-2 border-black bg-white rounded-md p-1" sideOffset={5}>
-                  Chat with emerald
-                  <Tooltip.Arrow className="TooltipArrow fill-black" />
-                </Tooltip.Content>
-              </Tooltip.Portal>
-            </Tooltip.Root>
-          </Tooltip.Provider>
-
-          <Tooltip.Provider delayDuration={300}>
-            <Tooltip.Root>
-              <Tooltip.Trigger asChild>
-                <button className="IconButton">
-                  <div className="h-[42px] w-[42px] rounded-xl cursor-pointer bg-orange-500"></div>
-                </button>
-              </Tooltip.Trigger>
-              <Tooltip.Portal>
-                <Tooltip.Content className="TooltipContent border-solid border-2 border-black bg-white rounded-md p-1" sideOffset={5}>
-                  Chat with orange
-                  <Tooltip.Arrow className="TooltipArrow fill-black" />
-                </Tooltip.Content>
-              </Tooltip.Portal>
-            </Tooltip.Root>
-          </Tooltip.Provider>
+          {models.map((model) => {
+            return (
+              <Tooltip.Provider delayDuration={300}>
+                <Tooltip.Root>
+                  <Tooltip.Trigger asChild>
+                    <button className="IconButton">
+                      <img src={ModelDefinitions[model.type].image} className="h-[42px] w-[42px] rounded-xl" />
+                    </button>
+                  </Tooltip.Trigger>
+                  <Tooltip.Portal>
+                    <Tooltip.Content className="TooltipContent border-solid border-2 border-black bg-white rounded-md p-1" sideOffset={5}>
+                      Chat with {ModelDefinitions[model.type].name}
+                      <Tooltip.Arrow className="TooltipArrow fill-black" />
+                    </Tooltip.Content>
+                  </Tooltip.Portal>
+                </Tooltip.Root>
+              </Tooltip.Provider>
+            )
+          })}
         </div>
 
         {/* Chats list */}

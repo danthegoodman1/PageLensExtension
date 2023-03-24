@@ -3,23 +3,10 @@ import Browser from 'webextension-polyfill';
 import ListChats from './views/ListChats';
 import { useApp } from './Context';
 import NewModel from './views/NewModel';
-import { getModels, StoredModel } from './models';
 
 export default function Popup(): JSX.Element {
 
-  const { view, setView } = useApp()
-
-  const [models, setModels] = useState<StoredModel[]>([])
-
-  useEffect(() => {
-    loadStoredModels()
-  }, [])
-
-  async function loadStoredModels() {
-    console.log("fetching stored models")
-    const stored = await getModels()
-    setModels(stored)
-  }
+  const { view, setView, models } = useApp()
 
   const sendMsg = async () => {
     let queryOptions = { active: true, currentWindow: true };

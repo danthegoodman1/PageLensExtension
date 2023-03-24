@@ -1,5 +1,6 @@
 // ** React Imports
-import { useState, createContext, useContext } from 'react';
+import { useState, createContext, useContext, useEffect } from 'react';
+import { getModels, StoredModel } from './models';
 
 export type Platform = 'twitch' | 'multi';
 
@@ -9,18 +10,33 @@ export type ViewType = "list chats" | "new chat" | "chat" | "list models" | "new
 export type AppContextType = {
 	view: ViewType
 	setView: (view: ViewType) => void
+	models: StoredModel[]
+	reloadModels: () => Promise<void>
 }
 const AppContext = createContext<AppContextType | null>(null)
 
 const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
 
 	const [view, setView] = useState<ViewType>("list chats")
+	const [models, setModels] = useState<StoredModel[]>([])
+
+  async function loadStoredModels() {
+    console.log("fetching stored models")
+    const stored = await getModels()
+    setModels(stored)
+  }
+
+	useEffect(() => {
+		loadStoredModels()
+	}, [])
 
 	return (
 		<AppContext.Provider
 			value={{
 				view,
-				setView
+				setView,
+				models,
+				reloadModels: loadStoredModels
 			}}
 		>
 			{children}
