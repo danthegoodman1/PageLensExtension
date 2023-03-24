@@ -4,6 +4,7 @@ import Browser from "webextension-polyfill"
 export interface ModelModule {
   name: string
   iconPath: string
+  canStreamMessages: boolean
 
   /**
    * Sends the current chat message with context. Transcript has already been modified. Can ignore `onProgress` if the model does not support streaming messages.
@@ -36,7 +37,6 @@ export class ChatController {
 
   opts?: ChatControllerOptions
   session: ChatSession = { messages: [], created: new Date(), lastUpdated: new Date(), id: randomUUID() }
-  canStreamMessages = false
   module: ModelModule
   moduleKey?: string
 
@@ -52,7 +52,7 @@ export class ChatController {
 
   /**
    * Sends a message for the chat
-   * @argument onProgress a callback that will be invoked for every update if `canStreamMessages = true`.
+   * @argument onProgress a callback that will be invoked for every update if `moduile.canStreamMessages = true`.
    * @returns The final chat message
    */
   async SendMessage(message: string) {

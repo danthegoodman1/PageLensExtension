@@ -7,6 +7,7 @@ export interface StoredModel {
   type: ModelType
   name: string
   created: Date
+  [key: string]: any
 }
 
 export async function getModels(): Promise<StoredModel[]> {
