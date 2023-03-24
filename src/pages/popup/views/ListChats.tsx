@@ -57,7 +57,7 @@ export default function ListChats({ onNewChat, onSelectChat, onNewModel }: ListC
                 <Tooltip.Root>
                   <Tooltip.Trigger asChild>
                     <button onClick={() => onNewChat(model.id)} className="IconButton">
-                      <img src={ModelDefinitions[model.type].image} className="h-[42px] w-[42px] rounded-xl" />
+                      <img src={ModelDefinitions[model.type].image} className="h-[42px] w-[42px] rounded-md" />
                     </button>
                   </Tooltip.Trigger>
                   <Tooltip.Portal>

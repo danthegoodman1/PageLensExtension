@@ -53,7 +53,7 @@ function AvailableModelsList({ models, onModelClick, onSetView }: { models: Stor
           return (
             <div onClick={() => onModelClick(id)} key={ind} className="cursor-pointer flex flex-row mb-2 border-solid border-black border-2 rounded-md px-2 py-3 justify-between items-start gap-2">
               <div className="flex flex-row items-center">
-                <img src={info.image} className="h-[42px] w-[42px] rounded-xl" />
+                <img src={info.image} className="h-[42px] w-[42px] rounded-md" />
                 <div className="ml-2 flex flex-col shrink min-w-0 justify-self-start self-start">
                   <p className="text-lg text-black truncate font-bold w-full">
                     {info.name}
