@@ -2,11 +2,6 @@ import { randomUUID } from "crypto"
 import Browser from "webextension-polyfill"
 
 export interface ModelModule {
-  /**
-   * The storage key where the API key will be stored in the browser.
-   */
-  storageKey: string
-
   name: string
   iconPath: string
 
@@ -95,13 +90,5 @@ export class ChatController {
    */
   async saveSession() {
     await Browser.storage.sync.set({ [this.session.id]: this.session })
-  }
-
-  /**
-   * Gets the storage key from sync storage
-   */
-  async loadKey() {
-    const key = await Browser.storage.sync.get(this.module.storageKey)
-    this.moduleKey = key[this.module.storageKey]
   }
 }
