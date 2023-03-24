@@ -47,7 +47,7 @@ export default function Popup(): JSX.Element {
   return (
     <div className="flex grow w-screen h-screen">
       {view === "list chats" && <ListChats onNewModel={handleNewModel} onSelectChat={handleOpenChat} onNewChat={handleNewChat} />}
-      {view === "new model" && <NewModel onSetView={(v) => setView(v)} />}
+      {view === "new model" && <NewModel models={models} onSetView={(v) => setView(v)} />}
     </div>
   );
 }

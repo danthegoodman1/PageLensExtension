@@ -41,9 +41,9 @@ export default function ListChats({ onNewChat, onSelectChat, onNewModel }: ListC
                 </button>
               </Tooltip.Trigger>
               <Tooltip.Portal>
-                <Tooltip.Content className="TooltipContent bg-slate-300 rounded-md p-1" sideOffset={5}>
+                <Tooltip.Content className="TooltipContent border-solid border-2 border-black bg-white rounded-md p-1" sideOffset={5}>
                   Add new model
-                  <Tooltip.Arrow className="TooltipArrow fill-slate-300" />
+                  <Tooltip.Arrow className="TooltipArrow fill-black" />
                 </Tooltip.Content>
               </Tooltip.Portal>
             </Tooltip.Root>
@@ -53,13 +53,13 @@ export default function ListChats({ onNewChat, onSelectChat, onNewModel }: ListC
             <Tooltip.Root>
               <Tooltip.Trigger asChild>
                 <button className="IconButton">
-                  <div className="h-[42px] w-[42px] rounded-full cursor-pointer bg-indigo-500"></div>
+                  <div className="h-[42px] w-[42px] rounded-xl cursor-pointer bg-indigo-500"></div>
                 </button>
               </Tooltip.Trigger>
               <Tooltip.Portal>
-                <Tooltip.Content className="TooltipContent bg-slate-300 rounded-md p-1" sideOffset={5}>
+                <Tooltip.Content className="TooltipContent border-solid border-2 border-black bg-white rounded-md p-1" sideOffset={5}>
                   Chat with indigo
-                  <Tooltip.Arrow className="TooltipArrow fill-slate-300" />
+                  <Tooltip.Arrow className="TooltipArrow fill-black" />
                 </Tooltip.Content>
               </Tooltip.Portal>
             </Tooltip.Root>
@@ -69,13 +69,13 @@ export default function ListChats({ onNewChat, onSelectChat, onNewModel }: ListC
             <Tooltip.Root>
               <Tooltip.Trigger asChild>
                 <button className="IconButton">
-                  <div className="h-[42px] w-[42px] rounded-full cursor-pointer bg-emerald-500"></div>
+                  <div className="h-[42px] w-[42px] rounded-xl cursor-pointer bg-emerald-500"></div>
                 </button>
               </Tooltip.Trigger>
               <Tooltip.Portal>
-                <Tooltip.Content className="TooltipContent bg-slate-300 rounded-md p-1" sideOffset={5}>
+                <Tooltip.Content className="TooltipContent border-solid border-2 border-black bg-white rounded-md p-1" sideOffset={5}>
                   Chat with emerald
-                  <Tooltip.Arrow className="TooltipArrow fill-slate-300" />
+                  <Tooltip.Arrow className="TooltipArrow fill-black" />
                 </Tooltip.Content>
               </Tooltip.Portal>
             </Tooltip.Root>
@@ -85,13 +85,13 @@ export default function ListChats({ onNewChat, onSelectChat, onNewModel }: ListC
             <Tooltip.Root>
               <Tooltip.Trigger asChild>
                 <button className="IconButton">
-                  <div className="h-[42px] w-[42px] rounded-full cursor-pointer bg-orange-500"></div>
+                  <div className="h-[42px] w-[42px] rounded-xl cursor-pointer bg-orange-500"></div>
                 </button>
               </Tooltip.Trigger>
               <Tooltip.Portal>
-                <Tooltip.Content className="TooltipContent bg-slate-300 rounded-md p-1" sideOffset={5}>
+                <Tooltip.Content className="TooltipContent border-solid border-2 border-black bg-white rounded-md p-1" sideOffset={5}>
                   Chat with orange
-                  <Tooltip.Arrow className="TooltipArrow fill-slate-300" />
+                  <Tooltip.Arrow className="TooltipArrow fill-black" />
                 </Tooltip.Content>
               </Tooltip.Portal>
             </Tooltip.Root>
@@ -102,14 +102,14 @@ export default function ListChats({ onNewChat, onSelectChat, onNewModel }: ListC
         <div className="flex flex-col mb-4 gap-1">
 
           <div className="cursor-pointer flex flex-row mb-2 border-solid border-black border-2 rounded-md px-2 py-3 justify-start items-center gap-2">
-            <div className="h-[42px] w-[42px] rounded-full bg-orange-500 shrink-0"></div>
+            <div className="h-[42px] w-[42px] rounded-xl bg-orange-500 shrink-0"></div>
             <div className="flex flex-col shrink min-w-0">
               <p className="text-xs text-gray-500 truncate w-full"><strong className="font-semibold">Mar 23rd</strong> - {'https://lightning.ai/docs/pytorch/stable/starter/blah/blah/blahfefee'}</p>
               <p className="text-sm truncate w-full text-gray-600">Blah blah blah Blah blah blah Blah blah blah Blah blah blahBlah blah blahBlah blah blah </p>
             </div>
           </div>
           <div className="cursor-pointer  flex flex-row mb-2 border-solid border-black border-2 rounded-md px-2 py-3 justify-start items-center gap-2">
-            <div className="h-[42px] w-[42px] rounded-full bg-orange-500 shrink-0"></div>
+            <div className="h-[42px] w-[42px] rounded-xl bg-orange-500 shrink-0"></div>
             <div className="flex flex-col shrink min-w-0">
               <p className="text-xs text-gray-500 truncate w-full"><strong className="font-semibold">Mar 23rd</strong> - {'https://lightning.ai/docs/pytorch/stable/starter/blah/blah/blahfefee'}</p>
               <p className="text-sm truncate w-full text-gray-600">Blah blah blah Blah blah blah Blah blah blah Blah blah blahBlah blah blahBlah blah blah </p>

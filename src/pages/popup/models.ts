@@ -1,17 +1,55 @@
-import { useState } from "react";
-import Browser from "webextension-polyfill";
+import { useState } from "react"
+import Browser from "webextension-polyfill"
 
-export type ModelType = "gpt-3.5-turbo" | "gpt-4"
+export const ModelTypes = ["gpt-3.5-turbo", "gpt-4"]
+export type ModelType = typeof ModelTypes[number]
+export interface ModelDefinition {
+  name: string
+  image: string,
+  ratings: {
+    reasoning: number
+    speed: number
+    conciseness: number
+    cost: number
+    code: number
+    summarization: number
+  }
+}
+export const ModelDefinitions: {[key: ModelType]: ModelDefinition} = {
+  "gpt-4": {
+    image: "/image/gpt-4.png",
+    name: "GPT-4",
+    ratings: {
+      reasoning: 9,
+      speed: 4,
+      conciseness: 8,
+      cost: 10,
+      code: 9,
+      summarization: 9
+    }
+  },
+  "gpt-3.5-turbo": {
+    image: "/image/gpt-35.png",
+    name: "GPT-3.5 Turbo",
+    ratings: {
+      reasoning: 6,
+      speed: 10,
+      conciseness: 4,
+      cost: 3,
+      code: 6,
+      summarization: 7
+    }
+  },
+}
 
 export interface StoredModel {
   type: ModelType
   name: string
   created: Date
-  [key: string]: any
+  auth: string
 }
 
 export async function getModels(): Promise<StoredModel[]> {
-  console.log(Browser.storage)
   const models: StoredModel[] = (await Browser.storage.local.get("models") as Record<string, StoredModel[]>)["models"]
   return models || []
 }
