@@ -87,13 +87,14 @@ export class ChatController {
     })
     if (this.sessionUpdated) // send the update if we have the function
       this.sessionUpdated(this.session)
+    this.saveSession()
   }
 
   /**
-   * Saves the transcript
+   * Saves the session to local storage
    */
-  async saveTranscript() {
-    
+  async saveSession() {
+    await Browser.storage.sync.set({ [this.session.id]: this.session })
   }
 
   /**
