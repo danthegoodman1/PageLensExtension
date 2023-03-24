@@ -1,4 +1,3 @@
-import { randomUUID } from "crypto"
 import Browser from "webextension-polyfill"
 
 export interface ModelModule {
@@ -36,7 +35,7 @@ export interface ChatSession {
 export class ChatController {
 
   opts?: ChatControllerOptions
-  session: ChatSession = { messages: [], created: new Date(), lastUpdated: new Date(), id: randomUUID() }
+  session: ChatSession = { messages: [], created: new Date(), lastUpdated: new Date(), id: window.crypto.randomUUID() }
   module: ModelModule
   moduleKey?: string
 
@@ -91,6 +90,6 @@ export class ChatController {
    * Saves the session to local storage
    */
   async saveSession() {
-    await Browser.storage.sync.set({ [this.session.id]: this.session })
+    await Browser.storage.local.set({ [`chat_${this.session.id}`]: this.session })
   }
 }

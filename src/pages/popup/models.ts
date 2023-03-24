@@ -45,8 +45,12 @@ export const ModelDefinitions: {[key: ModelType]: ModelDefinition} = {
 export interface StoredModel {
   type: ModelType
   name: string
-  created: Date
+  /**
+   * ms
+   */
+  created: number
   auth: string
+  id: string
 }
 
 export async function getModels(): Promise<StoredModel[]> {

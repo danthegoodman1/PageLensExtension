@@ -6,7 +6,7 @@ import { useApp } from "../Context"
 
 export interface ListChatsProps {
   onSelectChat: (chatID: string) => void
-  onNewChat: (modelName?: string) => void
+  onNewChat: (modelID?: string) => void
   onNewModel: () => void
 }
 
@@ -56,7 +56,7 @@ export default function ListChats({ onNewChat, onSelectChat, onNewModel }: ListC
               <Tooltip.Provider delayDuration={300}>
                 <Tooltip.Root>
                   <Tooltip.Trigger asChild>
-                    <button className="IconButton">
+                    <button onClick={() => onNewChat(model.id)} className="IconButton">
                       <img src={ModelDefinitions[model.type].image} className="h-[42px] w-[42px] rounded-xl" />
                     </button>
                   </Tooltip.Trigger>

@@ -6,7 +6,7 @@ import NewModel from './views/NewModel';
 
 export default function Popup(): JSX.Element {
 
-  const { view, setView, models } = useApp()
+  const { view, setView, models, activeChat, setActiveChat } = useApp()
 
   const sendMsg = async () => {
     let queryOptions = { active: true, currentWindow: true };

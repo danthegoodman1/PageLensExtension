@@ -12,6 +12,8 @@ export type AppContextType = {
 	setView: (view: ViewType) => void
 	models: StoredModel[]
 	reloadModels: () => Promise<void>
+	activeChat: string | undefined
+	setActiveChat: (chatID: string) => void
 }
 const AppContext = createContext<AppContextType | null>(null)
 
@@ -19,6 +21,7 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
 
 	const [view, setView] = useState<ViewType>("list chats")
 	const [models, setModels] = useState<StoredModel[]>([])
+	const [activeChat, setActiveChat] = useState<string | undefined>(undefined)
 
   async function loadStoredModels() {
     console.log("fetching stored models")
@@ -36,7 +39,11 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
 				view,
 				setView,
 				models,
-				reloadModels: loadStoredModels
+				reloadModels: loadStoredModels,
+				activeChat,
+				setActiveChat: (chatID: string) => {
+					setActiveChat(chatID)
+				}
 			}}
 		>
 			{children}

@@ -109,9 +109,10 @@ function AddModelInput(props: { modelType: ModelType, onBack: () => void, onAdde
   async function handleAdd() {
     await putModel({
       auth,
-      created: new Date(),
+      created: new Date().getTime(),
       name: modelDef.name,
-      type: props.modelType
+      type: props.modelType,
+      id: window.crypto.randomUUID()
     })
     props.onAdded()
   }
