@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import Browser from 'webextension-polyfill';
 import ListChats from './views/ListChats';
 import { useApp } from './Context';
