@@ -27,6 +27,12 @@ export default function Popup(): JSX.Element {
   function handleOpenChat(chatID?: string) {
     setView("chat")
   }
+
+  function handleCloseChat() {
+    setView("list chats")
+    setActiveChat()
+  }
+
   function handleNewModel() {
     setView("new model")
   }

@@ -13,7 +13,7 @@ export type AppContextType = {
 	models: StoredModel[]
 	reloadModels: () => Promise<void>
 	activeChat: string | undefined
-	setActiveChat: (chatID: string) => void
+	setActiveChat: (chatID?: string) => void
 }
 const AppContext = createContext<AppContextType | null>(null)
 
@@ -41,9 +41,7 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
 				models,
 				reloadModels: loadStoredModels,
 				activeChat,
-				setActiveChat: (chatID: string) => {
-					setActiveChat(chatID)
-				}
+				setActiveChat
 			}}
 		>
 			{children}

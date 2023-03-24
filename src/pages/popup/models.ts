@@ -45,9 +45,6 @@ export const ModelDefinitions: {[key: ModelType]: ModelDefinition} = {
 export interface StoredModel {
   type: ModelType
   name: string
-  /**
-   * ms
-   */
   created: number
   auth: string
   id: string
