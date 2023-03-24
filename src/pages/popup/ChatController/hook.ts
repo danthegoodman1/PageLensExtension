@@ -1,14 +1,14 @@
 import { useRef, useState } from "react"
-import { ChatController, ChatTranscript, ModelModule } from "./controller"
+import { ChatController, ChatSession, ModelModule } from "./controller"
 
 export function useChatController(modelModule: ModelModule) {
   const [isReceivingMessage, setIsReceivingMessage] = useState(false)
-  const [transcript, setTranscript] = useState<ChatTranscript | undefined>()
+  const [session, setSession] = useState<ChatSession | undefined>()
   const [messageError, setMessageError] = useState<Error | undefined>()
 
   const controller = useRef(new ChatController(modelModule))
-  controller.current.transcriptUpdated = (transcript) => {
-    setTranscript(transcript)
+  controller.current.sessionUpdated = (transcript) => {
+    setSession(transcript)
   }
 
   const handleSendMessage = async (message: string) => {
@@ -25,7 +25,7 @@ export function useChatController(modelModule: ModelModule) {
   return {
     canReceiveMessages: controller.current.canStreamMessages,
     isReceivingMessage,
-    transcript,
+    session,
     sendMessage: handleSendMessage,
     messageError
   }

@@ -17,7 +17,7 @@ export interface ModelModule {
 }
 
 export interface ChatControllerOptions {
-  transcript?: ChatTranscript
+  session?: ChatSession
 }
 
 export interface ChatMessage {
@@ -29,7 +29,7 @@ export interface ChatMessage {
   [key: string]: any
 }
 
-export interface ChatTranscript {
+export interface ChatSession {
   initialPrompt?: string
   messages: ChatMessage[]
   id: string
@@ -40,18 +40,18 @@ export interface ChatTranscript {
 export class ChatController {
 
   opts?: ChatControllerOptions
-  transcript: ChatTranscript = { messages: [], created: new Date(), lastUpdated: new Date(), id: randomUUID() }
+  session: ChatSession = { messages: [], created: new Date(), lastUpdated: new Date(), id: randomUUID() }
   canStreamMessages = false
   module: ModelModule
   moduleKey?: string
 
-  transcriptUpdated?: (transcript: ChatTranscript) => void
+  sessionUpdated?: (transcript: ChatSession) => void
 
   constructor(module: ModelModule, opts?: ChatControllerOptions) {
     this.module = module
     this.opts = opts
-    if (this.opts?.transcript) {
-      this.transcript = this.opts.transcript
+    if (this.opts?.session) {
+      this.session = this.opts.session
     }
   }
 
@@ -61,17 +61,17 @@ export class ChatController {
    * @returns The final chat message
    */
   async SendMessage(message: string) {
-    if (this.transcript.messages.length === 0) {
+    if (this.session.messages.length === 0) {
       // TODO: Fetch initial page content
       const pageContent = ""
-      this.transcript.messages.push({
+      this.session.messages.push({
         hidden: true,
         author: "user",
         created: new Date(),
-        message: `${this.transcript.initialPrompt || ""}${pageContent}`
+        message: `${this.session.initialPrompt || ""}${pageContent}`
       })
     }
-    this.transcript.messages.push({
+    this.session.messages.push({
       author: "user",
       created: new Date(),
       message
@@ -81,12 +81,12 @@ export class ChatController {
       created: new Date(),
       message: ""
     }
-    this.transcript.messages.push(response)
+    this.session.messages.push(response)
     response.message = await this.module.submitChat((progress) => {
       response.message = progress
     })
-    if (this.transcriptUpdated) // send the update if we have the function
-      this.transcriptUpdated(this.transcript)
+    if (this.sessionUpdated) // send the update if we have the function
+      this.sessionUpdated(this.session)
   }
 
   /**
