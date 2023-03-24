@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react"
-import { ChatController, ChatMessage, ChatSession, ModelModule } from "./controller"
+import { ChatMessage, ChatSession } from "../chats"
+import { ChatController, ModelModule } from "./controller"
 
 export function useChatController(modelModule: ModelModule, opts: {
   sessionID?: string

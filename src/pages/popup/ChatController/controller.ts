@@ -1,4 +1,5 @@
 import Browser from "webextension-polyfill"
+import { ChatMessage, ChatSession } from "../chats"
 
 export interface ModelModule {
   name: string
@@ -12,37 +13,6 @@ export interface ModelModule {
 }
 
 export interface ChatControllerOptions {
-  url: string
-}
-
-export interface ChatMessage {
-  author: "user" | "ai"
-  /**
-   * Message components to join for a single message
-   */
-  message: {
-    /**
-     * The message content
-     */
-    content: string
-    /**
-     * Whether this should be visually hidden, used for highlighted regions
-     */
-    hidden?: boolean
-    kind: "input" | "highlight" | "initial prompt" | "response"
-  }[]
-  created: number
-  vote?: "up" | "down"
-  hidden?: boolean
-  [key: string]: any
-}
-
-export interface ChatSession {
-  initialPrompt?: string
-  messages: ChatMessage[]
-  id: string
-  created: number
-  lastUpdated: number
   url: string
 }
 
