@@ -23,11 +23,11 @@ export default function ListChats({ onNewChat, onSelectChat, onNewModel }: ListC
         {/* Search Bar */}
         <div className="flex flex-row mb-4 relative">
           <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <Search size={16} className="text-gray-400" />
+            <Search size={16} className="text-black" />
           </div>
           <input value={search} onChange={(e) => {
             setSearch(e.target.value)
-          }} type="text" id="table-search" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search for chats" />
+          }} type="text" id="table-search" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-slate-900 focus:border-slate-900 block w-full pl-10 p-2.5" placeholder="Search for chats" />
         </div>
 
         {/* Quick start chat */}
@@ -57,7 +57,7 @@ export default function ListChats({ onNewChat, onSelectChat, onNewModel }: ListC
               </Tooltip.Trigger>
               <Tooltip.Portal>
                 <Tooltip.Content className="TooltipContent bg-slate-300 rounded-md p-1" sideOffset={5}>
-                  Start chat with indigo
+                  Chat with indigo
                   <Tooltip.Arrow className="TooltipArrow fill-slate-300" />
                 </Tooltip.Content>
               </Tooltip.Portal>
@@ -73,7 +73,7 @@ export default function ListChats({ onNewChat, onSelectChat, onNewModel }: ListC
               </Tooltip.Trigger>
               <Tooltip.Portal>
                 <Tooltip.Content className="TooltipContent bg-slate-300 rounded-md p-1" sideOffset={5}>
-                  Start chat with emerald
+                  Chat with emerald
                   <Tooltip.Arrow className="TooltipArrow fill-slate-300" />
                 </Tooltip.Content>
               </Tooltip.Portal>
@@ -89,7 +89,7 @@ export default function ListChats({ onNewChat, onSelectChat, onNewModel }: ListC
               </Tooltip.Trigger>
               <Tooltip.Portal>
                 <Tooltip.Content className="TooltipContent bg-slate-300 rounded-md p-1" sideOffset={5}>
-                  Start chat with orange
+                  Chat with orange
                   <Tooltip.Arrow className="TooltipArrow fill-slate-300" />
                 </Tooltip.Content>
               </Tooltip.Portal>
@@ -100,17 +100,17 @@ export default function ListChats({ onNewChat, onSelectChat, onNewModel }: ListC
         {/* Chats list */}
         <div className="flex flex-col mb-4 gap-1">
 
-          <div className="cursor-pointer flex flex-row mb-2 bg-slate-200 rounded-md px-2 py-3 justify-start items-center gap-1">
+          <div className="cursor-pointer flex flex-row mb-2 border-solid border-black border-2 rounded-md px-2 py-3 justify-start items-center gap-2">
             <div className="h-[42px] w-[42px] rounded-full bg-orange-500 shrink-0"></div>
             <div className="flex flex-col shrink min-w-0">
-              <p className="text-xs font-semibold text-gray-500">Mar 23rd</p>
+              <p className="text-xs text-gray-500 truncate w-full"><strong className="font-semibold">Mar 23rd</strong> - {'https://lightning.ai/docs/pytorch/stable/starter/blah/blah/blahfefee'}</p>
               <p className="text-sm truncate w-full text-gray-600">Blah blah blah Blah blah blah Blah blah blah Blah blah blahBlah blah blahBlah blah blah </p>
             </div>
           </div>
-          <div className="cursor-pointer  flex flex-row mb-2 bg-slate-200 rounded-md px-2 py-3 justify-start items-center gap-1">
+          <div className="cursor-pointer  flex flex-row mb-2 border-solid border-black border-2 rounded-md px-2 py-3 justify-start items-center gap-2">
             <div className="h-[42px] w-[42px] rounded-full bg-orange-500 shrink-0"></div>
             <div className="flex flex-col shrink min-w-0">
-              <p className="text-xs font-semibold text-gray-500">Mar 23rd</p>
+              <p className="text-xs text-gray-500 truncate w-full"><strong className="font-semibold">Mar 23rd</strong> - {'https://lightning.ai/docs/pytorch/stable/starter/blah/blah/blahfefee'}</p>
               <p className="text-sm truncate w-full text-gray-600">Blah blah blah Blah blah blah Blah blah blah Blah blah blahBlah blah blahBlah blah blah </p>
             </div>
           </div>
