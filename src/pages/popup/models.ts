@@ -11,22 +11,23 @@ export interface StoredModel {
 }
 
 export async function getModels(): Promise<StoredModel[]> {
-  const models = (await Browser.storage.sync.get("models") as Record<string, StoredModel[]>)["models"]
-  return models
+  console.log(Browser.storage)
+  const models: StoredModel[] = (await Browser.storage.local.get("models") as Record<string, StoredModel[]>)["models"]
+  return models || []
 }
 
 export async function putModel(model: StoredModel) {
   const models: Record<string, StoredModel[]> = {
     "models": [...await getModels(), model]
   }
-  await Browser.storage.sync.set(models)
+  await Browser.storage.local.set(models)
 }
 
 export async function removeModel(modelName: string) {
   const models: Record<string, StoredModel[]> = {
     "models": (await getModels()).filter((model) => model.name  !== modelName)
   }
-  await Browser.storage.sync.set(models)
+  await Browser.storage.local.set(models)
 }
 
 export function useModels() {

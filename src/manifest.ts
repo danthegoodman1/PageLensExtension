@@ -37,6 +37,9 @@ const manifest: Manifest.WebExtensionManifest = {
       matches: [],
     },
   ],
+  permissions: [
+    "storage"
+  ]
 };
 
 export default manifest;

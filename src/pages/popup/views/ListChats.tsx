@@ -1,6 +1,7 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Search, PlusCircle } from "react-feather"
 import * as Tooltip from '@radix-ui/react-tooltip'
+import { getModels, StoredModel } from "../models"
 
 export interface ListChatsProps {
   onSelectChat: (chatID: string) => void
