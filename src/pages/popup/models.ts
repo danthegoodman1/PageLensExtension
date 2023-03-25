@@ -1,5 +1,6 @@
 import { useState } from "react"
 import Browser from "webextension-polyfill"
+import { APIReq } from "./api"
 
 export const ModelTypes = ["gpt-3.5-turbo", "gpt-4"]
 export type ModelType = typeof ModelTypes[number]
@@ -16,7 +17,7 @@ export interface ModelDefinition {
   }
 }
 export const ModelDefinitions: {[key: ModelType]: ModelDefinition} = {
-  "gpt-4": {
+  "openai_gpt-4": {
     image: "/image/gpt-4.png",
     name: "GPT-4",
     ratings: {
@@ -28,7 +29,7 @@ export const ModelDefinitions: {[key: ModelType]: ModelDefinition} = {
       summarization: 9
     }
   },
-  "gpt-3.5-turbo": {
+  "openai_gpt-3.5-turbo": {
     image: "/image/gpt-35.png",
     name: "GPT-3.5 Turbo",
     ratings: {
@@ -42,42 +43,50 @@ export const ModelDefinitions: {[key: ModelType]: ModelDefinition} = {
   },
 }
 
-export interface StoredModel {
-  type: ModelType
+export interface Model {
+  user_id: string
+  instance_id: string
+  model_id: string
   name: string
-  created: number
+  disabled: boolean
   auth: string
+  meta?: Record<string, unknown>
+  created_at: Date
+  updated_at: Date
+}
+
+export async function getModels(): Promise<Model[]> {
+  console.log("getting models")
+  const models: { models: Model[] } = await (await APIReq("/models", "GET")).json()
+  return models.models || []
+}
+
+interface PutModelReq {
   id: string
+  auth: string
+  name: string
 }
 
-export async function getModels(): Promise<StoredModel[]> {
-  const models: StoredModel[] = (await Browser.storage.local.get("models") as Record<string, StoredModel[]>)["models"]
-  return models || []
-}
-
-export async function putModel(model: StoredModel) {
-  const models: Record<string, StoredModel[]> = {
-    "models": [...await getModels(), model]
-  }
-  await Browser.storage.local.set(models)
+export async function putModel(model: PutModelReq) {
+  await APIReq("/models", "POST", JSON.stringify(model))
 }
 
 export async function removeModel(modelName: string) {
-  const models: Record<string, StoredModel[]> = {
+  const models: Record<string, Model[]> = {
     "models": (await getModels()).filter((model) => model.name  !== modelName)
   }
   await Browser.storage.local.set(models)
 }
 
 export function useModels() {
-  const [models, setModels] = useState<StoredModel[] | undefined>()
+  const [models, setModels] = useState<Model[] | undefined>()
 
   return {
     models,
     loadModels: async () => {
       setModels(await getModels())
     },
-    addModel: async (model: StoredModel) => {
+    addModel: async (model: PutModelReq) => {
       await putModel(model)
       setModels(await getModels())
     },

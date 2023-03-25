@@ -3,11 +3,11 @@ import { useState } from "react"
 import { ArrowLeft, Info } from "react-feather"
 import ProgressBar from "../Components/ProgressBar"
 import { useApp, ViewType } from "../Context"
-import { ModelDefinition, ModelDefinitions, ModelType, ModelTypes, putModel, StoredModel } from "../models"
+import { ModelDefinition, ModelDefinitions, ModelType, ModelTypes, putModel, Model } from "../models"
 
 export interface NewModelProps {
   onSetView: (view: ViewType) => void
-  models: StoredModel[]
+  models: Model[]
 }
 
 export default function NewModel({ onSetView, models }: NewModelProps) {
@@ -30,7 +30,7 @@ export default function NewModel({ onSetView, models }: NewModelProps) {
   )
 }
 
-function AvailableModelsList({ models, onModelClick, onSetView }: { models: StoredModel[], onModelClick: (modelType: ModelType) => void, onSetView: (view: ViewType) => void }) {
+function AvailableModelsList({ models, onModelClick, onSetView }: { models: Model[], onModelClick: (modelType: ModelType) => void, onSetView: (view: ViewType) => void }) {
 
   return (
     <>
@@ -105,14 +105,13 @@ function AvailableModelsList({ models, onModelClick, onSetView }: { models: Stor
 function AddModelInput(props: { modelType: ModelType, onBack: () => void, onAdded: () => void }) {
   const modelDef = ModelDefinitions[props.modelType]
   const [auth, setAuth] = useState("")
+  const [name, setName] = useState("")
 
   async function handleAdd() {
     await putModel({
       auth,
-      created: new Date().getTime(),
-      name: modelDef.name,
-      type: props.modelType,
-      id: window.crypto.randomUUID()
+      name,
+      id: props.modelType
     })
     props.onAdded()
   }
@@ -134,6 +133,12 @@ function AddModelInput(props: { modelType: ModelType, onBack: () => void, onAdde
         </div>
       </div>
       <div className="flex flex-col mb-1 gap-2 items-start">
+        <p className="text-base text-black truncate w-full font-medium">
+          Nickname
+        </p>
+        <input value={name} onChange={(e) => {
+            setName(e.target.value)
+          }} type="text" id="table-search" className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-slate-900 focus:border-slate-900 block w-full p-2" placeholder="Skynet v0.0.1" />
         <p className="text-base text-black truncate w-full font-medium">
           OpenAI API Key
         </p>

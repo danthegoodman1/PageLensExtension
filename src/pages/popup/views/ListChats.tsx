@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react"
 import { Search, PlusCircle } from "react-feather"
 import * as Tooltip from '@radix-ui/react-tooltip'
-import { getModels, ModelDefinitions, StoredModel } from "../models"
+import { getModels, ModelDefinitions, Model } from "../models"
 import { useApp } from "../Context"
+import { ChatListItem } from "../chats"
 
 export interface ListChatsProps {
   onSelectChat: (chatID: string) => void
@@ -13,6 +14,8 @@ export interface ListChatsProps {
 export default function ListChats({ onNewChat, onSelectChat, onNewModel }: ListChatsProps) {
 
   const [search, setSearch] = useState("")
+  const [chats, setChats] = useState<ChatListItem[]>([])
+
   const { models } = useApp()
 
   return (
@@ -56,13 +59,13 @@ export default function ListChats({ onNewChat, onSelectChat, onNewModel }: ListC
               <Tooltip.Provider delayDuration={300}>
                 <Tooltip.Root>
                   <Tooltip.Trigger asChild>
-                    <button onClick={() => onNewChat(model.id)} className="IconButton">
-                      <img src={ModelDefinitions[model.type].image} className="h-[42px] w-[42px] rounded-md" />
+                    <button onClick={() => onNewChat(model.instance_id)} className="IconButton">
+                      <img src={ModelDefinitions[model.model_id].image} className="h-[42px] w-[42px] rounded-md" />
                     </button>
                   </Tooltip.Trigger>
                   <Tooltip.Portal>
                     <Tooltip.Content className="TooltipContent border-solid border-2 border-black bg-white rounded-md p-1" sideOffset={5}>
-                      Chat with {ModelDefinitions[model.type].name}
+                      Chat with {model.name}
                       <Tooltip.Arrow className="TooltipArrow fill-black" />
                     </Tooltip.Content>
                   </Tooltip.Portal>
@@ -75,20 +78,24 @@ export default function ListChats({ onNewChat, onSelectChat, onNewModel }: ListC
         {/* Chats list */}
         <div className="flex flex-col mb-4 gap-1">
 
-          <div className="cursor-pointer flex flex-row mb-2 border-solid border-black border-2 rounded-md px-2 py-3 justify-start items-center gap-2">
+          {chats.map((chat) => {
+            return (
+              <div className="cursor-pointer flex flex-row mb-2 border-solid border-black border-2 rounded-md px-2 py-3 justify-start items-center gap-2">
+                <div className="h-[42px] w-[42px] rounded-xl bg-orange-500 shrink-0"></div>
+                <div className="flex flex-col shrink min-w-0">
+                  <p className="text-xs text-gray-500 truncate w-full"><strong className="font-semibold">{chat.session.created_at.toDateString().split(" ").slice(1, 3).join(" ")}</strong> - {chat.session.url}</p>
+                  <p className="text-sm truncate w-full text-gray-600">{chat.message ? chat.message.message.slice(0, 80) : "(no messages)"}</p>
+                </div>
+              </div>
+            )
+          })}
+          {/* <div className="cursor-pointer  flex flex-row mb-2 border-solid border-black border-2 rounded-md px-2 py-3 justify-start items-center gap-2">
             <div className="h-[42px] w-[42px] rounded-xl bg-orange-500 shrink-0"></div>
             <div className="flex flex-col shrink min-w-0">
               <p className="text-xs text-gray-500 truncate w-full"><strong className="font-semibold">Mar 23rd</strong> - {'https://lightning.ai/docs/pytorch/stable/starter/blah/blah/blahfefee'}</p>
               <p className="text-sm truncate w-full text-gray-600">Blah blah blah Blah blah blah Blah blah blah Blah blah blahBlah blah blahBlah blah blah </p>
             </div>
-          </div>
-          <div className="cursor-pointer  flex flex-row mb-2 border-solid border-black border-2 rounded-md px-2 py-3 justify-start items-center gap-2">
-            <div className="h-[42px] w-[42px] rounded-xl bg-orange-500 shrink-0"></div>
-            <div className="flex flex-col shrink min-w-0">
-              <p className="text-xs text-gray-500 truncate w-full"><strong className="font-semibold">Mar 23rd</strong> - {'https://lightning.ai/docs/pytorch/stable/starter/blah/blah/blahfefee'}</p>
-              <p className="text-sm truncate w-full text-gray-600">Blah blah blah Blah blah blah Blah blah blah Blah blah blahBlah blah blahBlah blah blah </p>
-            </div>
-          </div>
+          </div> */}
 
         </div>
       </div>

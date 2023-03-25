@@ -1,4 +1,4 @@
-import { StoredModel } from "../models";
+import { Model } from "../models";
 import { ModelModule } from "./controller";
 
 export class OpenAIModule implements ModelModule {
@@ -7,7 +7,7 @@ export class OpenAIModule implements ModelModule {
   canStreamMessages = true
   modelID: string
 
-  constructor(model: StoredModel) {
+  constructor(model: Model) {
     this.name = model.name
     this.modelID = model.modelID || "gpt-3.5-turbo"
     this.iconPath = "/img/openai.png"
