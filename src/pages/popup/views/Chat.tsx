@@ -60,17 +60,12 @@ export default function ListModels(props: { session?: ChatSession }) {
           setSocketUrl(null)
           break
         case "response":
-          if (msg.data) {
-            const m = messages
-            m.push(msg.data as ChatMessage)
-            setMessages(m)
-          }
+          const m = messages
+          const chatMessage = msg.data as ChatMessage
+          m.push(chatMessage)
+          setMessages(m)
           setSocketUrl(null)
           setIncomingMessage(undefined)
-          break
-        case "stream response":
-          const chatMessage = msg.data as ChatMessage
-          setIncomingMessage(chatMessage)
           if (!props.session) {
             console.log("first response in session, setting session")
             setSession({
@@ -80,6 +75,9 @@ export default function ListModels(props: { session?: ChatSession }) {
               url: pageURL,
             })
           }
+          break
+        case "stream response":
+          setIncomingMessage(msg.data)
           break
       }
     }
@@ -135,11 +133,12 @@ export default function ListModels(props: { session?: ChatSession }) {
       console.log("READY STATE", readyState)
       if (readyState === ReadyState.OPEN) {
         // Send the message
-        console.log("sending message over websocket")
+        console.log("sending message over websocket", session?.id)
         const payload: OutgoingChatMessage = {
           prompt: outgoingMessage,
           url: pageURL,
-          modelInstanceID: model.instance_id
+          modelInstanceID: model.instance_id,
+          sessionID: session?.id
         }
         const tab = await Browser.tabs.query({ active: true, currentWindow: true });
         if (messages.length <= 1) {
