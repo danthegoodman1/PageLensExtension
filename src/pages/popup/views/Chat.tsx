@@ -7,6 +7,7 @@ import * as Tooltip from "@radix-ui/react-tooltip"
 import { ChatMessage, ChatSession, getChatSession } from "../chats"
 import SendIcon from "../Components/SendIcon"
 import { useApp } from "../Context"
+import { PageRequest, PageResponse } from "@src/pages/content"
 
 const socketAPI = "ws://localhost:8080/chat?hey=ho"
 
@@ -129,38 +130,61 @@ export default function ListModels(props: { session?: ChatSession }) {
   }
 
   useEffect(() => {
-    console.log("READY STATE", readyState)
-    if (readyState === ReadyState.OPEN) {
-      // Send the message
-      console.log("sending message over websocket")
-      // TODO: collect highlight or get web page content
-      const payload: OutgoingChatMessage = {
-        prompt: outgoingMessage,
-        url: pageURL,
-        modelInstanceID: model.instance_id
-      }
-      // TODO: push this message to messages
-      setMessages((m) => {
-        m.push({
-          author: "user",
-          kind: "user input",
-          created_at: new Date().toISOString(),
-          hidden: false,
-          id: window.crypto.randomUUID(), // doesn't really matter, just should be unique
-          message: outgoingMessage,
-          session_id: session?.id || "not yet", // if this is the first message, we don't know yet
-          updated_at: new Date().toISOString(),
-          vote: null,
+    (async () => {
+      console.log("READY STATE", readyState)
+      if (readyState === ReadyState.OPEN) {
+        // Send the message
+        console.log("sending message over websocket")
+        const payload: OutgoingChatMessage = {
+          prompt: outgoingMessage,
+          url: pageURL,
+          modelInstanceID: model.instance_id
+        }
+        const tab = await Browser.tabs.query({ active: true, currentWindow: true });
+        if (messages.length <= 1) {
+          // We need to get the webpage
+          const resp = await Browser.tabs.sendMessage(tab[0].id!, {
+            type: "page content"
+          } as PageRequest) as PageResponse
+          if (resp.pageContent) {
+            payload.webpage = resp.pageContent
+          } else {
+            console.error("did not get page content!")
+            // TODO: handle error better
+          }
+        }
+        // Check for highlight
+        const resp = await Browser.tabs.sendMessage(tab[0].id!, {
+          type: "selection"
+        } as PageRequest) as PageResponse
+        if (resp.selection) {
+          console.log("got selected region")
+          payload.highlighted = resp.selection
+        }
+
+        // TODO: push this message to messages
+        setMessages((m) => {
+          m.push({
+            author: "user",
+            kind: "user input",
+            created_at: new Date().toISOString(),
+            hidden: false,
+            id: window.crypto.randomUUID(), // doesn't really matter, just should be unique
+            message: outgoingMessage,
+            session_id: session?.id || "not yet", // if this is the first message, we don't know yet
+            updated_at: new Date().toISOString(),
+            vote: null,
+          })
+          return m
         })
-        return m
-      })
-      sendMessage(JSON.stringify(payload))
-      setOutgoingMessage("")
-    }
-    if (readyState === ReadyState.CLOSED) {
-      console.log("socket closed")
-      setSocketUrl(null)
-    }
+        sendMessage(JSON.stringify(payload))
+        setOutgoingMessage("")
+      }
+      if (readyState === ReadyState.CLOSED) {
+        console.log("socket closed")
+        setSocketUrl(null)
+      }
+    })()
   }, [readyState])
 
   return (
