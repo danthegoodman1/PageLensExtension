@@ -86,7 +86,6 @@ export default function ListChats({ onNewChat, onSelectChat, onNewModel, reloadC
         <div className="flex flex-col mb-4 gap-1">
 
           {chats.map((chat) => {
-            console.log(chat)
             return (
               <div className="cursor-pointer flex flex-row mb-2 border-solid border-black border-2 rounded-md px-2 py-3 justify-start items-center gap-2">
                 <div className="h-[42px] w-[42px] rounded-xl bg-orange-500 shrink-0"></div>
