@@ -8,20 +8,37 @@ import { ChatMessage, ChatSession, getChatSession } from "../chats"
 import SendIcon from "../Components/SendIcon"
 import { useApp } from "../Context"
 
-const socketAPI = "ws://localhost:8080/chat"
+const socketAPI = "ws://localhost:8080/chat?hey=ho"
+
+interface WebSocketMessage {
+  type: "close" | "response" | "stream response"
+  data: any
+}
+
+interface OutgoingChatMessage {
+  highlighted?: string
+  webpage?: string
+  prompt: string
+  url?: string
+  sessionID?: string
+  modelInstanceID: string
+}
 
 export default function ListModels(props: { session?: ChatSession }) {
 
-  const { view, setView, models, activeChat } = useApp()
+  const { setView, models, activeChat } = useApp()
 
-  const [outgoingMessage, setOGMessgae] = useState("")
+  const [outgoingMessage, setOutgoingMessage] = useState("")
+  const [incomingMessage, setIncomingMessage] = useState<ChatMessage>()
+  const [session, setSession] = useState<ChatSession | undefined>(props.session)
+
   const [socketUrl, setSocketUrl] = useState<string | null>(null)
   const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl, {
     // reconnectAttempts: 5,
     // retryOnError: true,
   })
 
-  const [pageURL, setPageURL] = useState("")
+  const [pageURL, setPageURL] = useState(props.session?.url || "")
 
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [initalLoading, setInitialLoading] = useState(true)
@@ -34,7 +51,36 @@ export default function ListModels(props: { session?: ChatSession }) {
   }, [activeChat])
 
   useEffect(() => {
-
+    if (lastMessage) {
+      const msg = JSON.parse(lastMessage.data) as WebSocketMessage
+      console.log("got websocket message", msg)
+      switch (msg.type) {
+        case "close":
+          setSocketUrl(null)
+          break
+        case "response":
+          if (msg.data) {
+            const m = messages
+            m.push(msg.data as ChatMessage)
+            setMessages(m)
+          }
+          setSocketUrl(null)
+          break
+        case "stream response":
+          const chatMessage = msg.data as ChatMessage
+          setIncomingMessage(chatMessage)
+          if (!props.session) {
+            console.log("first response in session, setting session")
+            setSession({
+              created_at: chatMessage.created_at,
+              id: chatMessage.session_id,
+              updated_at: chatMessage.updated_at,
+              url: pageURL,
+            })
+          }
+          break
+      }
+    }
   }, [lastMessage, readyState])
 
   const buttonDisabled = initalLoading || outgoingMessage === ""
@@ -50,32 +96,33 @@ export default function ListModels(props: { session?: ChatSession }) {
           m.push({
             author: "ai",
             kind: "placeholder",
-            created_at: new Date(),
+            created_at: new Date().toISOString(),
             hidden: false,
             id: "placeholder",
             message: "How can I help?",
             session_id: "",
-            updated_at: new Date(),
-            user_id: "",
+            updated_at: new Date().toISOString(),
             vote: null,
           })
           return m
         })
       }
 
-      const tabs = await Browser.tabs.query({active: true, lastFocusedWindow: true})
-      console.log(tabs)
-      if (tabs[0] && tabs[0].url) {
-        setPageURL(tabs[0].url)
+      if (pageURL === "") {
+        const tabs = await Browser.tabs.query({active: true, lastFocusedWindow: true})
+        if (tabs[0] && tabs[0].url) {
+          setPageURL(tabs[0].url)
+        }
       }
-      console.log('setting false')
+      // TODO: Otherwise show it needs to be on a webpage?
+
       setInitialLoading(false)
     })()
   }, [])
 
   const model = models.find((m) => m.instance_id === activeChat!.modelInstanceID)!
 
-  async function handleSend() {
+  function handleSend() {
     // Connect to the socket
     console.log("connecting to websocket")
     setSocketUrl(socketAPI)
@@ -86,6 +133,33 @@ export default function ListModels(props: { session?: ChatSession }) {
     if (readyState === ReadyState.OPEN) {
       // Send the message
       console.log("sending message over websocket")
+      // TODO: collect highlight or get web page content
+      const payload: OutgoingChatMessage = {
+        prompt: outgoingMessage,
+        url: pageURL,
+        modelInstanceID: model.instance_id
+      }
+      // TODO: push this message to messages
+      setMessages((m) => {
+        m.push({
+          author: "user",
+          kind: "user input",
+          created_at: new Date().toISOString(),
+          hidden: false,
+          id: window.crypto.randomUUID(), // doesn't really matter, just should be unique
+          message: outgoingMessage,
+          session_id: session?.id || "not yet", // if this is the first message, we don't know yet
+          updated_at: new Date().toISOString(),
+          vote: null,
+        })
+        return m
+      })
+      sendMessage(JSON.stringify(payload))
+      setOutgoingMessage("")
+    }
+    if (readyState === ReadyState.CLOSED) {
+      console.log("socket closed")
+      setSocketUrl(null)
     }
   }, [readyState])
 
@@ -132,25 +206,23 @@ export default function ListModels(props: { session?: ChatSession }) {
 
         {/* Chat box */}
         <div className="flex flex-col gap-2 items-start mt-1">
-          <form className="w-full">
-            <div className="w-full border rounded-lg">
-              <div className="px-2 pt-2 bg-white rounded-t-lg">
-                <textarea value={outgoingMessage} onChange={((e) => {
-                  setOGMessgae(e.target.value)
-                })} onKeyDown={(e) => {
-                  // TODO: enter/shift+enter handling
-                }} id="comment" rows={3} className="w-full resize-none focus:outline-none px-0 text-sm font-medium text-gray-900 bg-white border-0 focus:ring-0" placeholder="Ask a question" required></textarea>
-              </div>
-              <div className="flex items-center justify-end px-2 pt-1 pb-2">
-                <div className="flex pl-0 space-x-1 sm:pl-2">
-                  <button disabled={buttonDisabled} onClick={() => handleSend()} className={`text-sm flex gap-2 justify-center items-center align-middle py-2 px-5 ${buttonDisabled ? "bg-gray-500" : "bg-black"} text-white font-bold rounded-lg`}>
-                    Send
-                    <SendIcon />
-                  </button>
-                </div>
+          <div className="w-full border rounded-lg">
+            <div className="px-2 pt-2 bg-white rounded-t-lg">
+              <textarea value={outgoingMessage} onChange={((e) => {
+                setOutgoingMessage(e.target.value)
+              })} onKeyDown={(e) => {
+                // TODO: enter/shift+enter handling
+              }} id="comment" rows={3} className="w-full resize-none focus:outline-none px-0 text-sm font-medium text-gray-900 bg-white border-0 focus:ring-0" placeholder="Ask a question" required></textarea>
+            </div>
+            <div className="flex items-center justify-end px-2 pt-1 pb-2">
+              <div className="flex pl-0 space-x-1 sm:pl-2">
+                <button disabled={buttonDisabled} onClick={() => handleSend()} className={`text-sm flex gap-2 justify-center items-center align-middle py-2 px-5 ${buttonDisabled ? "bg-gray-500" : "bg-black"} text-white font-bold rounded-lg`}>
+                  Send
+                  <SendIcon />
+                </button>
               </div>
             </div>
-          </form>
+          </div>
         </div>
       </div>
     </div>

@@ -2,23 +2,21 @@ import Browser from "webextension-polyfill"
 import { APIReq } from "./api"
 
 export interface ChatSession {
-  user_id: string
   id: string
-  created_at: Date
-  updated_at: Date
+  created_at: string
+  updated_at: string
   url: string
 }
 
 export interface ChatMessage {
-  user_id: string
   id: string
   session_id: string
   author: 'ai' | 'user' | 'system'
   message: string
   hidden: boolean
   kind: 'user input' | 'highlight' | 'initial prompt' | 'response' | "placeholder"
-  created_at: Date
-  updated_at: Date
+  created_at: string
+  updated_at: string
   vote: 'up' | 'down' | null
   meta?: Record<string, unknown>
 }
