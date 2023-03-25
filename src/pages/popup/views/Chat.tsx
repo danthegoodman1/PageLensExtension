@@ -25,7 +25,7 @@ interface OutgoingChatMessage {
   modelInstanceID: string
 }
 
-export default function ListModels(props: { session?: ChatSession }) {
+export default function Chat(props: { session?: ChatSession }) {
 
   const { setView, models, activeChat } = useApp()
 
@@ -73,6 +73,7 @@ export default function ListModels(props: { session?: ChatSession }) {
               id: chatMessage.session_id,
               updated_at: chatMessage.updated_at,
               url: pageURL,
+              model_instance_id: model.instance_id
             })
           }
           break
@@ -88,7 +89,9 @@ export default function ListModels(props: { session?: ChatSession }) {
   useEffect(() => {
     (async () => {
       if (activeChat?.sessionID) {
+        console.log("got a session for this chat")
         const m = await getChatSession(activeChat.sessionID)
+        console.log("setting messages", m)
         setMessages(m)
       } else {
         // Put an initial message int here
@@ -133,12 +136,12 @@ export default function ListModels(props: { session?: ChatSession }) {
       console.log("READY STATE", readyState)
       if (readyState === ReadyState.OPEN) {
         // Send the message
-        console.log("sending message over websocket", session?.id)
+        console.log("sending message over websocket", session?.id || activeChat?.sessionID)
         const payload: OutgoingChatMessage = {
           prompt: outgoingMessage,
           url: pageURL,
           modelInstanceID: model.instance_id,
-          sessionID: session?.id
+          sessionID: session?.id || activeChat?.sessionID
         }
         const tab = await Browser.tabs.query({ active: true, currentWindow: true });
         if (messages.length <= 1) {
@@ -225,7 +228,20 @@ export default function ListModels(props: { session?: ChatSession }) {
 
         {/* Message window */}
         <div className="bg-gray-400 w-full h-full">
-          <p>{JSON.stringify(messages)}</p>
+          {messages.map((m, i) => {
+            if (m.author === "system" && m.kind === "highlight" && m.meta?.highlight) {
+              return (
+                <div key={i} className="my-2 bg-yellow-100 border-solid border-black border-2">
+                  <strong className="font-bold">Highlight</strong>: {m.meta.highlight} @ {m.created_at}
+                </div>
+              )
+            }
+            return (
+              <div key={i} className="my-2 bg-gray-50 border-solid border-black border-2">
+                <strong className="font-bold">{m.author}</strong>: {m.message} @ {m.created_at}
+              </div>
+            )
+          })}
           <p className="mt-2">{JSON.stringify(incomingMessage)}</p>
         </div>
 

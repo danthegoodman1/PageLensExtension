@@ -40,6 +40,10 @@ export default function Popup(): JSX.Element {
   }
 
   function handleOpenChat(modelInstanceID: string, sessionID: string) {
+    setActiveChat({
+      modelInstanceID,
+      sessionID
+    })
     setView("chat")
   }
 

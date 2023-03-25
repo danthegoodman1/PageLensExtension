@@ -87,7 +87,9 @@ export default function ListChats({ onNewChat, onSelectChat, onNewModel, reloadC
 
           {chats.map((chat) => {
             return (
-              <div className="cursor-pointer flex flex-row mb-2 border-solid border-black border-2 rounded-md px-2 py-3 justify-start items-center gap-2">
+              <div onClick={() => {
+                onSelectChat(chat.session.model_instance_id, chat.session.id)
+              }} className="cursor-pointer flex flex-row mb-2 border-solid border-black border-2 rounded-md px-2 py-3 justify-start items-center gap-2">
                 <div className="h-[42px] w-[42px] rounded-xl bg-orange-500 shrink-0"></div>
                 <div className="flex flex-col shrink min-w-0">
                   <p className="text-xs text-gray-500 truncate w-full"><strong className="font-semibold">{new Date(chat.session.created_at).toDateString().split(" ").slice(1, 3).join(" ")}</strong> - {chat.session.url}</p>

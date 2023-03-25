@@ -6,6 +6,7 @@ export interface ChatSession {
   created_at: string
   updated_at: string
   url: string
+  model_instance_id: string
 }
 
 export interface ChatMessage {
