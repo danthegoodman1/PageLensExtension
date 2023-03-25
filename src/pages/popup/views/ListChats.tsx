@@ -6,26 +6,23 @@ import { useApp } from "../Context"
 import { ChatListItem, listChatSessions } from "../chats"
 
 export interface ListChatsProps {
-  onSelectChat: (chatID: string) => void
+  onSelectChat: (modelInstanceID: string, sessionID: string) => void
   onNewChat: (modelID?: string) => void
   onNewModel: () => void
+  reloadChats: () => void
+  chats: ChatListItem[]
 }
 
-export default function ListChats({ onNewChat, onSelectChat, onNewModel }: ListChatsProps) {
+export default function ListChats({ onNewChat, onSelectChat, onNewModel, reloadChats, chats }: ListChatsProps) {
 
   const [search, setSearch] = useState("")
-  const [chats, setChats] = useState<ChatListItem[]>([])
 
-  const { models, reloadModels } = useApp()
-
-  async function reloadChats() {
-    const c = await listChatSessions()
-    setChats(c)
-  }
+  const { models, reloadModels, setActiveChat } = useApp()
 
   useEffect(() => {
     reloadModels()
     reloadChats()
+    setActiveChat(undefined)
   }, [])
 
   return (

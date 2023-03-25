@@ -38,7 +38,7 @@ const manifest: Manifest.WebExtensionManifest = {
     },
   ],
   permissions: [
-    "storage"
+    "storage", "tabs"
   ]
 };
 

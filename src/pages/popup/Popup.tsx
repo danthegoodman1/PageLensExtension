@@ -3,10 +3,13 @@ import ListChats from './views/ListChats';
 import { useApp } from './Context';
 import NewModel from './views/NewModel';
 import Chat from './views/Chat';
+import { ChatListItem, listChatSessions } from './chats';
+import { useState } from 'react';
 
 export default function Popup(): JSX.Element {
 
   const { view, setView, models, activeChat, setActiveChat } = useApp()
+  const [chats, setChats] = useState<ChatListItem[]>([])
 
   const sendMsg = async () => {
     let queryOptions = { active: true, currentWindow: true };
@@ -16,15 +19,27 @@ export default function Popup(): JSX.Element {
     console.log("got response", res)
   }
 
+  async function reloadChats() {
+    const c = await listChatSessions()
+    setChats(c)
+  }
+
   function handleNewChat(modelInstanceID?: string) {
     if (models.length === 0) {
       setView("new model")
       return
     }
+    if (modelInstanceID) {
+      setActiveChat({
+        modelInstanceID
+      })
+      setView("chat")
+      return
+    }
     setView("new chat")
   }
 
-  function handleOpenChat(chatID?: string) {
+  function handleOpenChat(modelInstanceID: string, sessionID: string) {
     setView("chat")
   }
 
@@ -39,7 +54,7 @@ export default function Popup(): JSX.Element {
 
   return (
     <div className="flex grow w-screen h-screen">
-      {view === "list chats" && <ListChats onNewModel={handleNewModel} onSelectChat={handleOpenChat} onNewChat={handleNewChat} />}
+      {view === "list chats" && <ListChats chats={chats} reloadChats={reloadChats} onNewModel={handleNewModel} onSelectChat={handleOpenChat} onNewChat={handleNewChat} />}
       {view === "new model" && <NewModel models={models} onSetView={(v) => setView(v)} />}
       {view === "chat" && <Chat />}
     </div>

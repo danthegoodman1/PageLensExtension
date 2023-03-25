@@ -32,7 +32,7 @@ export async function listChatSessions(offset?: string): Promise<ChatListItem[]>
 }
 
 
-export async function getChatSession(sessionID: string): Promise<ChatSession | undefined> {
+export async function getChatSession(sessionID: string): Promise<ChatMessage[]> {
   const res = await (await APIReq(`/chat/${encodeURIComponent(sessionID)}`, "GET", undefined)).json()
   return res.messages || []
 }
