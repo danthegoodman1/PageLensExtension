@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react"
 import { Search, PlusCircle } from "react-feather"
 import * as Tooltip from '@radix-ui/react-tooltip'
-import { getModels, ModelDefinitions, Model } from "../models"
+import { ModelDefinitions } from "../models"
 import { useApp } from "../Context"
-import { ChatListItem } from "../chats"
+import { ChatListItem, listChatSessions } from "../chats"
 
 export interface ListChatsProps {
   onSelectChat: (chatID: string) => void
@@ -16,7 +16,17 @@ export default function ListChats({ onNewChat, onSelectChat, onNewModel }: ListC
   const [search, setSearch] = useState("")
   const [chats, setChats] = useState<ChatListItem[]>([])
 
-  const { models } = useApp()
+  const { models, reloadModels } = useApp()
+
+  async function reloadChats() {
+    const c = await listChatSessions()
+    setChats(c)
+  }
+
+  useEffect(() => {
+    reloadModels()
+    reloadChats()
+  }, [])
 
   return (
     <div className="w-full flex grow shrink-0 flex-col px-2 py-1 justify-between">

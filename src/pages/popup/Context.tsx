@@ -6,14 +6,19 @@ export type Platform = 'twitch' | 'multi';
 
 export type ViewType = "list chats" | "new chat" | "chat" | "list models" | "new model"
 
+export interface ActiveChat {
+	modelInstanceID: string
+	sessionID?: string
+}
+
 // ** Create Context
 export type AppContextType = {
 	view: ViewType
 	setView: (view: ViewType) => void
 	models: Model[]
 	reloadModels: () => Promise<void>
-	activeChat: string | undefined
-	setActiveChat: (chatID?: string) => void
+	activeChat: ActiveChat | undefined
+	setActiveChat: (chat?: ActiveChat) => void
 }
 const AppContext = createContext<AppContextType | null>(null)
 
@@ -21,16 +26,12 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
 
 	const [view, setView] = useState<ViewType>("list chats")
 	const [models, setModels] = useState<Model[]>([])
-	const [activeChat, setActiveChat] = useState<string | undefined>(undefined)
+	const [activeChat, setActiveChat] = useState<ActiveChat | undefined>(undefined)
 
   async function loadStoredModels() {
     const stored = await getModels()
     setModels(stored)
   }
-
-	useEffect(() => {
-		loadStoredModels()
-	}, [])
 
 	return (
 		<AppContext.Provider

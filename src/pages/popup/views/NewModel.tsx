@@ -13,10 +13,8 @@ export interface NewModelProps {
 export default function NewModel({ onSetView, models }: NewModelProps) {
 
   const [addingModel, setAddingModel] = useState<ModelType | undefined>()
-  const { reloadModels } = useApp()
 
   function onAddModel() {
-    reloadModels()
     onSetView("list chats")
   }
 

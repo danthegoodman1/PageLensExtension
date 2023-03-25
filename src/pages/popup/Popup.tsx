@@ -2,6 +2,7 @@ import Browser from 'webextension-polyfill';
 import ListChats from './views/ListChats';
 import { useApp } from './Context';
 import NewModel from './views/NewModel';
+import Chat from './views/Chat';
 
 export default function Popup(): JSX.Element {
 
@@ -15,7 +16,7 @@ export default function Popup(): JSX.Element {
     console.log("got response", res)
   }
 
-  function handleNewChat(modelName?: string) {
+  function handleNewChat(modelInstanceID?: string) {
     if (models.length === 0) {
       setView("new model")
       return
@@ -40,6 +41,7 @@ export default function Popup(): JSX.Element {
     <div className="flex grow w-screen h-screen">
       {view === "list chats" && <ListChats onNewModel={handleNewModel} onSelectChat={handleOpenChat} onNewChat={handleNewChat} />}
       {view === "new model" && <NewModel models={models} onSetView={(v) => setView(v)} />}
+      {view === "chat" && <Chat />}
     </div>
   );
 }

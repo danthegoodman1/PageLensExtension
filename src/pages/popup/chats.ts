@@ -26,6 +26,7 @@ export interface ChatMessage {
 export interface ChatListItem { session: ChatSession, message?: ChatMessage }
 
 export async function listChatSessions(offset?: string): Promise<ChatListItem[]> {
+  console.log("listing chat sessions")
   const res = await (await APIReq(`/chat${offset ? 'offset='+encodeURIComponent(offset) : ''}`, "GET", undefined)).json()
   return res.sessions || []
 }

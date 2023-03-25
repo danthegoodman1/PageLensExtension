@@ -77,22 +77,3 @@ export async function removeModel(modelName: string) {
   }
   await Browser.storage.local.set(models)
 }
-
-export function useModels() {
-  const [models, setModels] = useState<Model[] | undefined>()
-
-  return {
-    models,
-    loadModels: async () => {
-      setModels(await getModels())
-    },
-    addModel: async (model: PutModelReq) => {
-      await putModel(model)
-      setModels(await getModels())
-    },
-    removeModel: async (modelName: string) => {
-      await removeModel(modelName)
-      setModels(await getModels())
-    }
-  }
-}
