@@ -12,8 +12,9 @@ const socketAPI = "ws://localhost:8080/chat"
 
 export default function ListModels(props: { session?: ChatSession }) {
 
-  const { view, setView, models, activeChat, setActiveChat } = useApp()
+  const { view, setView, models, activeChat } = useApp()
 
+  const [outgoingMessage, setOGMessgae] = useState("")
   const [socketUrl, setSocketUrl] = useState<string | null>(null)
   const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl, {
     // reconnectAttempts: 5,
@@ -36,11 +37,30 @@ export default function ListModels(props: { session?: ChatSession }) {
 
   }, [lastMessage, readyState])
 
+  const buttonDisabled = initalLoading || outgoingMessage === ""
+
   useEffect(() => {
     (async () => {
       if (activeChat?.sessionID) {
         const m = await getChatSession(activeChat.sessionID)
         setMessages(m)
+      } else {
+        // Put an initial message int here
+        setMessages((m) => {
+          m.push({
+            author: "ai",
+            kind: "placeholder",
+            created_at: new Date(),
+            hidden: false,
+            id: "placeholder",
+            message: "How can I help?",
+            session_id: "",
+            updated_at: new Date(),
+            user_id: "",
+            vote: null,
+          })
+          return m
+        })
       }
 
       const tabs = await Browser.tabs.query({active: true, lastFocusedWindow: true})
@@ -48,12 +68,26 @@ export default function ListModels(props: { session?: ChatSession }) {
       if (tabs[0] && tabs[0].url) {
         setPageURL(tabs[0].url)
       }
-
+      console.log('setting false')
       setInitialLoading(false)
     })()
   }, [])
 
   const model = models.find((m) => m.instance_id === activeChat!.modelInstanceID)!
+
+  async function handleSend() {
+    // Connect to the socket
+    console.log("connecting to websocket")
+    setSocketUrl(socketAPI)
+  }
+
+  useEffect(() => {
+    console.log("READY STATE", readyState)
+    if (readyState === ReadyState.OPEN) {
+      // Send the message
+      console.log("sending message over websocket")
+    }
+  }, [readyState])
 
   return (
     <div className="w-full flex flex-col p-1">
@@ -90,21 +124,26 @@ export default function ListModels(props: { session?: ChatSession }) {
         </div>
       </div>
       <div className="w-full h-full flex flex-col px-2 py-1 justify-between mb-2">
-          {/* Message window */}
-          <div className="bg-gray-400 w-full h-full">
 
-          </div>
+        {/* Message window */}
+        <div className="bg-gray-400 w-full h-full">
+          <p>{JSON.stringify(messages)}</p>
+        </div>
 
         {/* Chat box */}
         <div className="flex flex-col gap-2 items-start mt-1">
           <form className="w-full">
             <div className="w-full border rounded-lg">
               <div className="px-2 pt-2 bg-white rounded-t-lg">
-                <textarea id="comment" rows={3} className="w-full resize-none focus:outline-none px-0 text-sm font-medium text-gray-900 bg-white border-0 focus:ring-0" placeholder="Ask a question" required></textarea>
+                <textarea value={outgoingMessage} onChange={((e) => {
+                  setOGMessgae(e.target.value)
+                })} onKeyDown={(e) => {
+                  // TODO: enter/shift+enter handling
+                }} id="comment" rows={3} className="w-full resize-none focus:outline-none px-0 text-sm font-medium text-gray-900 bg-white border-0 focus:ring-0" placeholder="Ask a question" required></textarea>
               </div>
               <div className="flex items-center justify-end px-2 pt-1 pb-2">
                 <div className="flex pl-0 space-x-1 sm:pl-2">
-                  <button onClick={() => {}} className="text-sm flex gap-2 justify-center items-center align-middle py-2 px-5 bg-black text-white font-bold rounded-lg">
+                  <button disabled={buttonDisabled} onClick={() => handleSend()} className={`text-sm flex gap-2 justify-center items-center align-middle py-2 px-5 ${buttonDisabled ? "bg-gray-500" : "bg-black"} text-white font-bold rounded-lg`}>
                     Send
                     <SendIcon />
                   </button>
