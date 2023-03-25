@@ -66,6 +66,7 @@ export default function ListModels(props: { session?: ChatSession }) {
             setMessages(m)
           }
           setSocketUrl(null)
+          setIncomingMessage(undefined)
           break
         case "stream response":
           const chatMessage = msg.data as ChatMessage
@@ -226,6 +227,7 @@ export default function ListModels(props: { session?: ChatSession }) {
         {/* Message window */}
         <div className="bg-gray-400 w-full h-full">
           <p>{JSON.stringify(messages)}</p>
+          <p className="mt-2">{JSON.stringify(incomingMessage)}</p>
         </div>
 
         {/* Chat box */}
