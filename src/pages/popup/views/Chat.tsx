@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react"
-import { ArrowLeft, ChevronDown } from "react-feather"
+import { ArrowLeft, ChevronDown, Copy } from "react-feather"
 import useWebSocket, { ReadyState } from 'react-use-websocket'
 import Browser, { Tabs } from "webextension-polyfill"
 import * as Tooltip from "@radix-ui/react-tooltip"
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
+import ReactMarkdown from "react-markdown"
+import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter'
+import { dracula } from 'react-syntax-highlighter/dist/esm/styles/prism'
 
 import { ChatMessage, ChatSession, getChatSession } from "../chats"
 import SendIcon from "../Components/SendIcon"
@@ -119,7 +122,6 @@ export default function Chat(props: { session?: ChatSession }) {
       if (activeChat?.sessionID) {
         console.log("got a session for this chat")
         const m = await getChatSession(activeChat.sessionID)
-        console.log("setting messages", m)
         setMessages(m)
       } else {
         // Put an initial message int here
@@ -306,7 +308,7 @@ export default function Chat(props: { session?: ChatSession }) {
           {messages.map((m, i) => {
             if (m.author === "system" && m.kind === "error") {
               return (<div key={i} className="my-2 px-1 bg-red-200 border-solid border-black border-2">
-                <strong className="font-bold">Error</strong>: {m.message}
+                <strong className="font-bold">Error</strong>: <Md>{m.message}</Md>
               </div>)
             }
             if (m.author === "system" && m.kind === "webpage") {
@@ -330,12 +332,12 @@ export default function Chat(props: { session?: ChatSession }) {
             }
             return (
               <div key={i} className="my-2 px-1 bg-gray-50 border-solid border-black border-2">
-                <strong className="font-bold">{m.author === "user" ? "user" : model.name}</strong>: {m.message} @ {m.created_at}
+                <strong className="font-bold">{m.author === "user" ? "user" : model.name}</strong>: <Md>{m.message}</Md> @ {m.created_at}
               </div>
             )
           })}
           {incomingMessage && <div className="my-2 px-1 bg-gray-50 border-solid border-black border-2">
-            <strong className="font-bold">{model.name}</strong>: {incomingMessage.content}
+            <strong className="font-bold">{model.name}</strong>: <Md>{incomingMessage.content}</Md>
           </div>}
         </div>
 
@@ -406,4 +408,41 @@ export default function Chat(props: { session?: ChatSession }) {
       </div>
     </div>
   )
+}
+
+function Md({children}: any) {
+  const [clicked, setClicked] = useState(false)
+  return <ReactMarkdown
+  components={{
+    code({node, inline, className, children, ...props}) {
+      const match = /language-(\w+)/.exec(className || '')
+      return !inline && match ? (
+        <div className="relative">
+          <span onClick={() => {
+            const childContent = node.children.map((c) => (c as any).value).join("")
+            navigator.clipboard.writeText(childContent)
+            setClicked(true)
+            setTimeout(() => {
+              setClicked(false)
+            }, 1000)
+          }} className={`absolute top-0 right-0 flex gap-1 justify-center align-middle items-center bg-white p-1 rounded-bl-lg ${clicked ? "text-gray-400" : "text-black"} ${clicked ? "cursor-default" : "cursor-pointer"}`}>
+            <Copy size={12} />
+            {clicked ? "Copied" : "Copy"}
+          </span>
+          <SyntaxHighlighter
+            children={String(children).replace(/\n$/, '')}
+            style={dracula as any}
+            language={match[1]}
+            PreTag="div"
+            {...props}
+          />
+        </div>
+      ) : (
+        <code className={className + ` text-white bg-black rounded-lg p-1`} {...props}>
+          {children}
+        </code>
+      )
+    }
+  }}
+  className="overflow-y-scroll" children={children} />
 }

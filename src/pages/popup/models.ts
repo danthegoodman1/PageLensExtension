@@ -2,7 +2,7 @@ import { useState } from "react"
 import Browser from "webextension-polyfill"
 import { APIReq } from "./api"
 
-export const ModelTypes = ["gpt-3.5-turbo", "gpt-4"]
+export const ModelTypes = ["gpt-3.5-turbo", "gpt-4", "claude"]
 export type ModelType = typeof ModelTypes[number]
 export interface ModelDefinition {
   name: string
@@ -32,6 +32,18 @@ export const ModelDefinitions: {[key: ModelType]: ModelDefinition} = {
   "openai_gpt-3.5-turbo": {
     image: "/image/gpt-35.png",
     name: "GPT-3.5 Turbo",
+    ratings: {
+      reasoning: 6,
+      speed: 10,
+      conciseness: 4,
+      cost: 3,
+      code: 6,
+      summarization: 7
+    }
+  },
+  "anthropic_claude": {
+    image: "/image/anthropic.webp",
+    name: "Claude",
     ratings: {
       reasoning: 6,
       speed: 10,
