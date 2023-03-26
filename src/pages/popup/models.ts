@@ -2,7 +2,7 @@ import { useState } from "react"
 import Browser from "webextension-polyfill"
 import { APIReq } from "./api"
 
-export const ModelTypes = ["gpt-3.5-turbo", "gpt-4", "claude"]
+export const ModelTypes = ["gpt-3.5-turbo", "gpt-4", "claude_v1"]
 export type ModelType = typeof ModelTypes[number]
 export interface ModelDefinition {
   name: string
@@ -41,9 +41,9 @@ export const ModelDefinitions: {[key: ModelType]: ModelDefinition} = {
       summarization: 7
     }
   },
-  "anthropic_claude": {
+  "anthropic_claude_v1": {
     image: "/image/anthropic.webp",
-    name: "Claude",
+    name: "Claude v1",
     ratings: {
       reasoning: 6,
       speed: 10,
