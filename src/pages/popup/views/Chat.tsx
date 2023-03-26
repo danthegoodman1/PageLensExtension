@@ -3,6 +3,7 @@ import { ArrowLeft, ChevronDown } from "react-feather"
 import useWebSocket, { ReadyState } from 'react-use-websocket'
 import Browser, { Tabs } from "webextension-polyfill"
 import * as Tooltip from "@radix-ui/react-tooltip"
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 
 import { ChatMessage, ChatSession, getChatSession } from "../chats"
 import SendIcon from "../Components/SendIcon"
@@ -331,9 +332,50 @@ export default function Chat(props: { session?: ChatSession }) {
                   {realButtonMode === "withpage" ? "Send with Page" : "Send"}
                   <SendIcon />
                 </button>
-                <button className={`text-sm flex gap-2 justify-center cursor-pointer select-none items-center align-middle py-2 px-3 ${buttonDisabled ? "bg-gray-500" : "bg-black"} text-white font-bold rounded-r-lg`}>
-                  <ChevronDown size={20} stroke="white" />
-                </button>
+                <DropdownMenu.Root>
+                  <DropdownMenu.Trigger asChild>
+                    <button
+                      className={`text-sm flex gap-2 justify-center cursor-pointer select-none items-center align-middle py-2 px-3 ${
+                        buttonDisabled ? 'bg-gray-500' : 'bg-black'
+                      } text-white font-bold rounded-r-lg`}
+                    >
+                      <ChevronDown size={20} stroke="white" />
+                    </button>
+                  </DropdownMenu.Trigger>
+
+                  <DropdownMenu.Portal>
+                    <DropdownMenu.Content>
+                      <DropdownMenu.Item
+                        className="focus-none ring-0"
+                        onSelect={() => {
+                          setTargetButtonMode("withpage")
+                        }}
+                      >
+                        <div
+                          className={`text-sm flex gap-2 justify-center cursor-pointer select-none items-center align-middle py-2 px-3 ${
+                            !canDoPage ? 'bg-gray-200 text-gray-600' : 'bg-white cursor-pointer text-black'
+                          } font-bold rounded-t-lg border-black border-t-[1px] border-l-[1px] border-r-[1px]`}
+                        >
+                          {canDoPage ? "With Page" : "Page Already Sent"}
+                        </div>
+                      </DropdownMenu.Item>
+                      <DropdownMenu.Item
+                        className="focus-none"
+                        onSelect={() => {
+                          setTargetButtonMode("plain")
+                        }}
+                      >
+                        <div
+                          className={`text-sm flex gap-2 justify-center select-none items-center align-middle py-2 px-3 ${
+                            buttonDisabled ? 'bg-gray-200 text-gray-600' : 'bg-white cursor-pointer text-back'
+                          } font-bold rounded-b-lg border-black border-b-[1px] border-l-[1px] border-r-[1px]`}
+                        >
+                          Without Page
+                        </div>
+                      </DropdownMenu.Item>
+                    </DropdownMenu.Content>
+                  </DropdownMenu.Portal>
+                </DropdownMenu.Root>
               </div>
             </div>
           </div>

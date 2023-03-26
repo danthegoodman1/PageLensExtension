@@ -93,7 +93,7 @@ export default function ListChats({ onNewChat, onSelectChat, onNewModel, reloadC
                 <img src={ModelDefinitions[chat.session.model_id].image} className="h-[42px] w-[42px] rounded-md" />
                 <div className="flex flex-col shrink min-w-0">
                   <p className="text-xs text-gray-500 truncate w-full"><strong className="font-semibold">{new Date(chat.session.created_at).toDateString().split(" ").slice(1, 3).join(" ")}</strong> - {chat.session.url}</p>
-                  <p className="text-sm truncate w-full text-gray-600">{chat.message ? chat.message.message.slice(0, 80) : "(no messages)"}</p>
+                  <p className="text-sm truncate w-full text-gray-600">{chat.message && <strong className="font-bold">{chat.message?.author === "user" ? "user" : models.find((m) => m.instance_id === chat.session.model_instance_id)?.name}</strong>}: {chat.message ? chat.message.message.slice(0, 75) : "(no messages)"}</p>
                 </div>
               </div>
             )
