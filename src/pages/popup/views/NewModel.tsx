@@ -2,8 +2,8 @@ import * as Tooltip from "@radix-ui/react-tooltip"
 import { useState } from "react"
 import { ArrowLeft, Info } from "react-feather"
 import ProgressBar from "../Components/ProgressBar"
-import { useApp, ViewType } from "../Context"
-import { ModelDefinition, ModelDefinitions, ModelType, ModelTypes, putModel, Model } from "../models"
+import { ViewType } from "../Context"
+import { ModelDefinitions, ModelType, putModel, Model } from "../models"
 
 export interface NewModelProps {
   onSetView: (view: ViewType) => void
@@ -21,8 +21,11 @@ export default function NewModel({ onSetView, models }: NewModelProps) {
   return (
     <div className="w-full flex flex-col p-2">
 
-      {!addingModel && <AvailableModelsList onSetView={onSetView} onModelClick={(modelType) => setAddingModel(modelType)} models={models} />}
-      {!!addingModel && <AddModelInput onAdded={() => onAddModel()} onBack={() => setAddingModel(undefined)} modelType={addingModel} />}
+      {!addingModel && <AvailableModelsList onSetView={onSetView} onModelClick={(modelType) => {
+        setAddingModel(modelType)
+      }} models={models} />}
+      {!!addingModel && addingModel.startsWith("openai") && <AddOpenAIModel onAdded={() => onAddModel()} onBack={() => setAddingModel(undefined)} modelType={addingModel} />}
+      {!!addingModel && addingModel.startsWith("anthropic") && <AddAnthropicModel onAdded={() => onAddModel()} onBack={() => setAddingModel(undefined)} modelType={addingModel} />}
 
     </div>
   )
@@ -100,7 +103,7 @@ function AvailableModelsList({ models, onModelClick, onSetView }: { models: Mode
 
 }
 
-function AddModelInput(props: { modelType: ModelType, onBack: () => void, onAdded: () => void }) {
+function AddOpenAIModel(props: { modelType: ModelType, onBack: () => void, onAdded: () => void }) {
   const modelDef = ModelDefinitions[props.modelType]
   const [auth, setAuth] = useState("")
   const [name, setName] = useState("")
@@ -139,6 +142,57 @@ function AddModelInput(props: { modelType: ModelType, onBack: () => void, onAdde
           }} type="text" id="table-search" className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-slate-900 focus:border-slate-900 block w-full p-2" placeholder="Skynet v0.0.1" />
         <p className="text-base text-black truncate w-full font-medium">
           OpenAI API Key
+        </p>
+        <input value={auth} onChange={(e) => {
+            setAuth(e.target.value)
+          }} type="password" id="table-search" className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-slate-900 focus:border-slate-900 block w-full p-2" placeholder="Your API Key" />
+        <button onClick={() => handleAdd()} className="text-sm py-2 px-5 bg-black text-white font-semibold rounded-lg">
+          Add
+        </button>
+      </div>
+    </>
+  )
+}
+
+function AddAnthropicModel(props: { modelType: ModelType, onBack: () => void, onAdded: () => void }) {
+  const modelDef = ModelDefinitions[props.modelType]
+  const [auth, setAuth] = useState("")
+  const [name, setName] = useState("")
+
+  async function handleAdd() {
+    await putModel({
+      auth,
+      name,
+      id: props.modelType
+    })
+    props.onAdded()
+  }
+
+  return (
+    <>
+      <div className="flex flex-row">
+        <div onClick={() => props.onBack()} className="cursor-pointer flex items-center">
+          <ArrowLeft size={20} fontWeight={900} />
+          <p className="font-semibold text-lg text-[14px]">Go back</p>
+        </div>
+      </div>
+
+      <div className="w-full flex flex-col justify-between">
+        <div>
+          <div className="flex flex-row mb-1">
+            <h1 className="text-2xl font-bold">Add {modelDef.name}</h1>
+          </div>
+        </div>
+      </div>
+      <div className="flex flex-col mb-1 gap-2 items-start">
+        <p className="text-base text-black truncate w-full font-medium">
+          Nickname
+        </p>
+        <input value={name} onChange={(e) => {
+            setName(e.target.value)
+          }} type="text" id="table-search" className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-slate-900 focus:border-slate-900 block w-full p-2" placeholder="Skynet v0.0.1" />
+        <p className="text-base text-black truncate w-full font-medium">
+          Anthropic API Key
         </p>
         <input value={auth} onChange={(e) => {
             setAuth(e.target.value)
