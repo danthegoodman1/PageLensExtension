@@ -30,7 +30,7 @@ export default function ListChats({ onNewChat, onSelectChat, onNewModel, reloadC
       <div>
 
         <div className="flex flex-row mb-4">
-          <h1 className="text-2xl font-bold">Chats</h1>
+          <h1 className="text-2xl font-bold">PageLens - Chats</h1>
         </div>
 
         {/* Search Bar */}
