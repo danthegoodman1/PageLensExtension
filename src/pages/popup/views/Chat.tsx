@@ -69,11 +69,13 @@ export default function Chat(props: { session?: ChatSession }) {
           if (!props.session) {
             console.log("first response in session, setting session")
             setSession({
-              created_at: chatMessage.created_at,
+              created_at: new Date(chatMessage.created_at),
               id: chatMessage.session_id,
-              updated_at: chatMessage.updated_at,
+              updated_at: new Date(chatMessage.updated_at),
               url: pageURL,
-              model_instance_id: model.instance_id
+              model_instance_id: model.instance_id,
+              model_id: model.model_id,
+              user_id: "" // not needed
             })
           }
           break
@@ -238,7 +240,7 @@ export default function Chat(props: { session?: ChatSession }) {
             }
             return (
               <div key={i} className="my-2 bg-gray-50 border-solid border-black border-2">
-                <strong className="font-bold">{m.author}</strong>: {m.message} @ {m.created_at}
+                <strong className="font-bold">{m.author === "user" ? "user" : model.name}</strong>: {m.message} @ {m.created_at}
               </div>
             )
           })}

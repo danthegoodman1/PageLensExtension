@@ -1,12 +1,13 @@
-import Browser from "webextension-polyfill"
 import { APIReq } from "./api"
 
 export interface ChatSession {
+  user_id: string
   id: string
-  created_at: string
-  updated_at: string
+  created_at: Date
+  updated_at: Date
   url: string
   model_instance_id: string
+  model_id: string
 }
 
 export interface ChatMessage {
