@@ -1,4 +1,4 @@
-const apiURL = "http://localhost:8080"
+const apiURL = import.meta.env.VITE_API_URL
 
 export async function APIReq(path: string, method: "GET" | "POST" | "DELETE" | "PUT", body?: string) {
   const init: RequestInit = {

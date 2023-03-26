@@ -14,7 +14,7 @@ import SendIcon from "../Components/SendIcon"
 import { useApp } from "../Context"
 import { PageRequest, PageResponse } from "@src/pages/content"
 
-const socketAPI = "ws://localhost:8080/chat?hey=ho"
+const socketAPI = import.meta.env.VITE_SOCKET_API
 
 interface WebSocketMessage {
   type: "close" | "response" | "stream response" | "error"
