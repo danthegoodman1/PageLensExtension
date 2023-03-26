@@ -7,6 +7,7 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import ReactMarkdown from "react-markdown"
 import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter'
 import { dracula } from 'react-syntax-highlighter/dist/esm/styles/prism'
+import PulseLoader from "react-spinners/PulseLoader"
 
 import { ChatMessage, ChatSession, getChatSession } from "../chats"
 import SendIcon from "../Components/SendIcon"
@@ -36,6 +37,7 @@ export default function Chat(props: { session?: ChatSession }) {
 
   const [outgoingMessage, setOutgoingMessage] = useState("")
   const [incomingMessage, setIncomingMessage] = useState<{ content: string } | undefined>()
+  const [showSpinner, setShowSpinner] = useState(false)
   const [session, setSession] = useState<ChatSession | undefined>(props.session)
 
   const [socketUrl, setSocketUrl] = useState<string | null>(null)
@@ -76,6 +78,7 @@ export default function Chat(props: { session?: ChatSession }) {
           setMessages(m)
           setSocketUrl(null)
           setIncomingMessage(undefined)
+          setShowSpinner(false)
           if (!props.session) {
             console.log("first response in session, setting session")
             setSession({
@@ -89,9 +92,11 @@ export default function Chat(props: { session?: ChatSession }) {
               user_id: "" // not needed
             })
           }
+          document.getElementById("bottom")?.scrollIntoView()
           break
         case "stream response":
           setIncomingMessage(msg.data)
+          setShowSpinner(false)
           break
         case "error":
           setMessages((m) => {
@@ -110,6 +115,7 @@ export default function Chat(props: { session?: ChatSession }) {
           })
           setSocketUrl(null)
           setIncomingMessage(undefined)
+          setShowSpinner(false)
           break
       }
     }
@@ -231,6 +237,8 @@ export default function Chat(props: { session?: ChatSession }) {
         })
         sendMessage(JSON.stringify(payload))
         setOutgoingMessage("")
+        setShowSpinner(true)
+        document.getElementById("bottom")?.scrollIntoView()
       }
       if (readyState === ReadyState.CLOSED) {
         console.log("socket closed")
@@ -304,7 +312,7 @@ export default function Chat(props: { session?: ChatSession }) {
       <div className="w-full h-full flex flex-col px-2 py-1 justify-between mb-2">
 
         {/* Message window */}
-        <div className="bg-gray-400 w-full h-full">
+        <div className="bg-gray-400 w-full h-full max-h-[70vh] overflow-y-scroll">
           {messages.map((m, i) => {
             if (m.author === "system" && m.kind === "error") {
               return (<div key={i} className="my-2 px-1 bg-red-200 border-solid border-black border-2">
@@ -336,9 +344,21 @@ export default function Chat(props: { session?: ChatSession }) {
               </div>
             )
           })}
+          {showSpinner && !incomingMessage && <div className="my-2 px-1 bg-gray-50 border-solid border-black border-2">
+              <strong className="font-bold">{model.name}</strong>
+              : Thinking
+              <PulseLoader
+                color={"black"}
+                loading={true}
+                size={8}
+                aria-label="Loading Spinner"
+                data-testid="loader"
+              />
+            </div>}
           {incomingMessage && <div className="my-2 px-1 bg-gray-50 border-solid border-black border-2">
             <strong className="font-bold">{model.name}</strong>: <Md>{incomingMessage.content}</Md>
           </div>}
+          <div id="bottom"></div>
         </div>
 
         {/* Chat box */}
