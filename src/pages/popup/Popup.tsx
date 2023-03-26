@@ -9,7 +9,7 @@ import { useState } from 'react';
 export default function Popup(): JSX.Element {
 
   const { view, setView, models, activeChat, setActiveChat } = useApp()
-  const [chats, setChats] = useState<ChatListItem[]>([])
+  const [chats, setChats] = useState<ChatListItem[] | undefined>(undefined)
 
   const sendMsg = async () => {
     let queryOptions = { active: true, currentWindow: true };
@@ -58,7 +58,7 @@ export default function Popup(): JSX.Element {
     <div className="flex grow w-screen h-screen">
       {view === "list chats" && <ListChats chats={chats} reloadChats={reloadChats} onNewModel={handleNewModel} onSelectChat={handleOpenChat} onNewChat={handleNewChat} />}
       {view === "new model" && <NewModel models={models} onSetView={(v) => setView(v)} />}
-      {view === "chat" && <Chat session={chats.find((c) => c.session.id === activeChat?.sessionID)?.session} />}
+      {view === "chat" && <Chat session={chats?.find((c) => c.session.id === activeChat?.sessionID)?.session} />}
     </div>
   );
 }

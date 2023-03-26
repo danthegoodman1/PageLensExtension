@@ -4,13 +4,14 @@ import * as Tooltip from '@radix-ui/react-tooltip'
 import { ModelDefinitions } from "../models"
 import { useApp } from "../Context"
 import { ChatListItem, listChatSessions } from "../chats"
+import PulseLoader from "react-spinners/PulseLoader"
 
 export interface ListChatsProps {
   onSelectChat: (modelInstanceID: string, sessionID: string) => void
   onNewChat: (modelID?: string) => void
   onNewModel: () => void
   reloadChats: () => void
-  chats: ChatListItem[]
+  chats: ChatListItem[] | undefined
 }
 
 export default function ListChats({ onNewChat, onSelectChat, onNewModel, reloadChats, chats }: ListChatsProps) {
@@ -84,8 +85,17 @@ export default function ListChats({ onNewChat, onSelectChat, onNewModel, reloadC
 
         {/* Chats list */}
         <div className="flex flex-col mb-4 gap-1">
-
-          {chats.map((chat) => {
+          {chats === undefined && <>
+            Loading
+              <PulseLoader
+                color={"black"}
+                loading={true}
+                size={8}
+                aria-label="Loading Spinner"
+                data-testid="loader"
+              />
+          </>}
+          {chats !== undefined && chats.map((chat) => {
             return (
               <div onClick={() => {
                 onSelectChat(chat.session.model_instance_id, chat.session.id)
