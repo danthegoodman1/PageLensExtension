@@ -17,7 +17,7 @@ export interface ChatMessage {
   author: 'ai' | 'user' | 'system'
   message: string
   hidden: boolean
-  kind: 'user input' | 'webpage' | 'initial prompt' | 'response' | "placeholder"
+  kind: 'user input' | 'webpage' | 'initial prompt' | 'response' | "placeholder" | "error"
   created_at: string
   updated_at: string
   vote: 'up' | 'down' | null

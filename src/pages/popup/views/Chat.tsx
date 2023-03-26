@@ -13,7 +13,7 @@ import { PageRequest, PageResponse } from "@src/pages/content"
 const socketAPI = "ws://localhost:8080/chat?hey=ho"
 
 interface WebSocketMessage {
-  type: "close" | "response" | "stream response"
+  type: "close" | "response" | "stream response" | "error"
   data: any
 }
 
@@ -89,6 +89,24 @@ export default function Chat(props: { session?: ChatSession }) {
           break
         case "stream response":
           setIncomingMessage(msg.data)
+          break
+        case "error":
+          setMessages((m) => {
+            m.push({
+              author: "system",
+              kind: "error",
+              created_at: new Date().toISOString(),
+              hidden: false,
+              id: "placeholder",
+              message: msg.data.error,
+              session_id: "",
+              updated_at: new Date().toISOString(),
+              vote: null,
+            })
+            return m
+          })
+          setSocketUrl(null)
+          setIncomingMessage(undefined)
           break
       }
     }
@@ -286,12 +304,17 @@ export default function Chat(props: { session?: ChatSession }) {
         {/* Message window */}
         <div className="bg-gray-400 w-full h-full">
           {messages.map((m, i) => {
+            if (m.author === "system" && m.kind === "error") {
+              return (<div key={i} className="my-2 px-1 bg-red-200 border-solid border-black border-2">
+                <strong className="font-bold">Error</strong>: {m.message}
+              </div>)
+            }
             if (m.author === "system" && m.kind === "webpage") {
               return (
                 <Tooltip.Provider delayDuration={300}>
                   <Tooltip.Root>
                     <Tooltip.Trigger asChild>
-                      <div onClick={() => goToSessionURL()} key={i} className="cursor-pointer my-2 bg-yellow-100 border-solid border-black border-2">
+                      <div onClick={() => goToSessionURL()} key={i} className="cursor-pointer my-2 px-1 bg-yellow-100 border-solid border-black border-2">
                         <strong className="font-bold">Webpage</strong>: {!!pageTitle ? <strong className="font-bold">{pageTitle}</strong> : session?.url}
                       </div>
                     </Tooltip.Trigger>
@@ -306,12 +329,12 @@ export default function Chat(props: { session?: ChatSession }) {
               )
             }
             return (
-              <div key={i} className="my-2 bg-gray-50 border-solid border-black border-2">
+              <div key={i} className="my-2 px-1 bg-gray-50 border-solid border-black border-2">
                 <strong className="font-bold">{m.author === "user" ? "user" : model.name}</strong>: {m.message} @ {m.created_at}
               </div>
             )
           })}
-          {incomingMessage && <div className="my-2 bg-gray-50 border-solid border-black border-2">
+          {incomingMessage && <div className="my-2 px-1 bg-gray-50 border-solid border-black border-2">
             <strong className="font-bold">{model.name}</strong>: {incomingMessage.content}
           </div>}
         </div>
