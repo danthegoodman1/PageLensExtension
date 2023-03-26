@@ -86,7 +86,6 @@ export default function ListChats({ onNewChat, onSelectChat, onNewModel, reloadC
         <div className="flex flex-col mb-4 gap-1">
 
           {chats.map((chat) => {
-            console.log(chat)
             return (
               <div onClick={() => {
                 onSelectChat(chat.session.model_instance_id, chat.session.id)

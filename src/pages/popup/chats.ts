@@ -8,6 +8,7 @@ export interface ChatSession {
   url: string
   model_instance_id: string
   model_id: string
+  title: string
 }
 
 export interface ChatMessage {
@@ -16,7 +17,7 @@ export interface ChatMessage {
   author: 'ai' | 'user' | 'system'
   message: string
   hidden: boolean
-  kind: 'user input' | 'highlight' | 'initial prompt' | 'response' | "placeholder"
+  kind: 'user input' | 'webpage' | 'initial prompt' | 'response' | "placeholder"
   created_at: string
   updated_at: string
   vote: 'up' | 'down' | null

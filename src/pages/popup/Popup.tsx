@@ -14,9 +14,7 @@ export default function Popup(): JSX.Element {
   const sendMsg = async () => {
     let queryOptions = { active: true, currentWindow: true };
     let tab = await Browser.tabs.query(queryOptions);
-    console.log("tab", tab)
     const res = await Browser.tabs.sendMessage(tab[0].id!, "sent from popup")
-    console.log("got response", res)
   }
 
   async function reloadChats() {
@@ -60,7 +58,7 @@ export default function Popup(): JSX.Element {
     <div className="flex grow w-screen h-screen">
       {view === "list chats" && <ListChats chats={chats} reloadChats={reloadChats} onNewModel={handleNewModel} onSelectChat={handleOpenChat} onNewChat={handleNewChat} />}
       {view === "new model" && <NewModel models={models} onSetView={(v) => setView(v)} />}
-      {view === "chat" && <Chat />}
+      {view === "chat" && <Chat session={chats.find((c) => c.session.id === activeChat?.sessionID)?.session} />}
     </div>
   );
 }

@@ -1,5 +1,6 @@
 // ** React Imports
 import { useState, createContext, useContext, useEffect } from 'react';
+import Browser from 'webextension-polyfill';
 import { getModels, Model } from './models';
 
 export type Platform = 'twitch' | 'multi';
@@ -19,6 +20,8 @@ export type AppContextType = {
 	reloadModels: () => Promise<void>
 	activeChat: ActiveChat | undefined
 	setActiveChat: (chat?: ActiveChat) => void
+	targetBtnMode: "plain" | "withpage"
+	setTargetButtonMode: (btnMode: AppContextType["targetBtnMode"]) => void
 }
 const AppContext = createContext<AppContextType | null>(null)
 
@@ -27,11 +30,22 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
 	const [view, setView] = useState<ViewType>("list chats")
 	const [models, setModels] = useState<Model[]>([])
 	const [activeChat, setActiveChat] = useState<ActiveChat | undefined>(undefined)
+	const [targetBtnMode, setTargetBtnMode] = useState<AppContextType["targetBtnMode"]>("withpage")
 
   async function loadStoredModels() {
     const stored = await getModels()
     setModels(stored)
   }
+
+	useEffect(() => {
+		(async () => {
+			// Load the button mode
+			const existingMode = (await Browser.storage.local.get("btn mode"))["btn mode"]
+			if (existingMode) {
+				setTargetBtnMode(existingMode)
+			}
+		})()
+	}, [])
 
 	return (
 		<AppContext.Provider
@@ -41,7 +55,12 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
 				models,
 				reloadModels: loadStoredModels,
 				activeChat,
-				setActiveChat
+				setActiveChat,
+				targetBtnMode,
+				setTargetButtonMode: (btnMode) => {
+					Browser.storage.local.set({"btn mode": btnMode})
+					setTargetBtnMode(btnMode)
+				}
 			}}
 		>
 			{children}
