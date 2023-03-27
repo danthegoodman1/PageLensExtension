@@ -4,12 +4,20 @@ import '@pages/popup/index.css';
 import '@assets/styles/tailwind.css';
 import Popup from '@pages/popup/Popup';
 import { AppContextProvider } from './Context';
+import { ClerkProvider } from '@clerk/clerk-react';
+import Clerk from '@clerk/clerk-js';
 
 function init() {
   const rootContainer = document.querySelector("#__root");
   if (!rootContainer) throw new Error("Can't find Popup root element");
   const root = createRoot(rootContainer);
-  root.render(<AppContextProvider><Popup /></AppContextProvider>);
+  root.render(
+    <AppContextProvider>
+      <ClerkProvider Clerk={Clerk} publishableKey={import.meta.env.VITE_CLERK_PUB_KEY}>
+        <Popup />
+      </ClerkProvider>
+    </AppContextProvider>
+  );
 }
 
 init();

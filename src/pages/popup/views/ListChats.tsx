@@ -119,10 +119,10 @@ export default function ListChats({ onNewChat, onSelectChat, onNewModel, reloadC
         </div>
       </div>
 
-      <div id="me" className=" cursor-pointer flex flex-row mb-2 rounded-md p-2 justify-center items-center gap-2 justify-self-end place-items-end border-solid border-black border-2" onClick={() => onNewChat()}>
+      {/* <div id="me" className=" cursor-pointer flex flex-row mb-2 rounded-md p-2 justify-center items-center gap-2 justify-self-end place-items-end border-solid border-black border-2" onClick={() => onNewChat()}>
         <PlusCircle size={32} className="text-black cursor-pointer" strokeWidth={1.5} />
         <p className="text-xl font-medium">New chat</p>
-      </div>
+      </div> */}
 
     </div>
   )

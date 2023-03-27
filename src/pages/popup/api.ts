@@ -1,9 +1,17 @@
+import Browser from "webextension-polyfill"
+
 const apiURL = import.meta.env.VITE_API_URL
 
 export async function APIReq(path: string, method: "GET" | "POST" | "DELETE" | "PUT", body?: string) {
+  const r = await Browser.storage.local.get("email") // TODO: REMOVE ME WHEN WE GET TOKENS
+  const email = r["email"]
+  if (!email) {
+    throw new Error("missing email")
+  }
   const init: RequestInit = {
     headers: {
-      "content-type": "application/json"
+      "content-type": "application/json",
+      "x-email": email
     },
     method
   }

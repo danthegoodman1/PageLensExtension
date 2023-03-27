@@ -39,6 +39,7 @@ export default function Chat(props: { session?: ChatSession }) {
   const [incomingMessage, setIncomingMessage] = useState<{ content: string } | undefined>()
   const [showSpinner, setShowSpinner] = useState(false)
   const [session, setSession] = useState<ChatSession | undefined>(props.session)
+  const [metaDown, setMetaDown] = useState(false)
 
   const [socketUrl, setSocketUrl] = useState<string | null>(null)
   const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl, {
@@ -166,10 +167,11 @@ export default function Chat(props: { session?: ChatSession }) {
 
   const model = models.find((m) => m.instance_id === activeChat!.modelInstanceID)!
 
-  function handleSend() {
+  async function handleSend() {
     // Connect to the socket
     console.log("connecting to websocket")
-    setSocketUrl(socketAPI)
+    const res = await Browser.storage.local.get("email")
+    setSocketUrl(socketAPI+`?email=${encodeURIComponent(res["email"])}`)
   }
 
   useEffect(() => {
@@ -385,8 +387,17 @@ export default function Chat(props: { session?: ChatSession }) {
               <textarea value={outgoingMessage} onChange={((e) => {
                 setOutgoingMessage(e.target.value)
               })} onKeyDown={(e) => {
-                // TODO: enter/shift+enter handling
-              }} id="comment" rows={3} className="w-full resize-none focus:outline-none px-0 text-sm font-medium text-gray-900 bg-white border-0 focus:ring-0" placeholder="Ask a question" required></textarea>
+                if (e.key === "Meta") {
+                  setMetaDown(true)
+                }
+                if (e.key === "Enter" && metaDown) {
+                  handleSend()
+                }
+              }} onKeyUp={((e) => {
+                if (e.key === "Meta") {
+                  setMetaDown(false)
+                }
+              })} id="comment" rows={3} className="w-full resize-none focus:outline-none px-0 text-sm font-medium text-gray-900 bg-white border-0 focus:ring-0" placeholder="Ask a question" required></textarea>
             </div>
             <div className="flex items-center justify-end px-2 pt-1 pb-2">
               <div className="flex pl-0 sm:pl-2">
