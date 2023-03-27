@@ -225,6 +225,15 @@ export default function Chat(props: { session?: ChatSession }) {
           }
         }
 
+        const res = await Browser.scripting.executeScript({
+          func: function getInnerText() {
+            //You can play with your DOM here or check URL against your regex
+            console.log('Tab script:');
+            return window.getSelection()?.toString()
+          },
+          target: {tabId: tab[0].id!}
+        })
+
         // Push this message to messages
         setMessages((m) => {
           m.push({
@@ -237,6 +246,9 @@ export default function Chat(props: { session?: ChatSession }) {
             session_id: session?.id || "not yet", // if this is the first message, we don't know yet
             updated_at: new Date().toISOString(),
             vote: null,
+            meta: {
+              highlight: !!res[0].result ? res[0].result : undefined
+            }
           })
           return m
         })
