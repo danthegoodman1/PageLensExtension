@@ -40,7 +40,8 @@ const manifest: Manifest.WebExtensionManifest = {
   permissions: [
     "storage",
     "tabs",
-    "activeTab"
+    "activeTab",
+    "scripting"
   ],
   host_permissions: [
     "<all_urls>"

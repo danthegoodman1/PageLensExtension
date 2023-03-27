@@ -4,7 +4,7 @@ import { useApp } from './Context';
 import NewModel from './views/NewModel';
 import Chat from './views/Chat';
 import { ChatListItem, listChatSessions } from './chats';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function Popup(): JSX.Element {
 

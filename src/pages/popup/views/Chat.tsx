@@ -188,11 +188,16 @@ export default function Chat(props: { session?: ChatSession }) {
         const tab = await Browser.tabs.query({ active: true, currentWindow: true });
         if (realButtonMode === "withpage") {
           // We need to get the webpage
-          const resp = await Browser.tabs.sendMessage(tab[0].id!, {
-            type: "page content"
-          } as PageRequest) as PageResponse
-          if (resp.pageContent) {
-            payload.webpage = resp.pageContent
+          const res = await Browser.scripting.executeScript({
+            func: function getInnerText() {
+              //You can play with your DOM here or check URL against your regex
+              console.log('Tab script:');
+              return document.body.innerText
+            },
+            target: {tabId: tab[0].id!}
+          })
+          if (res[0].result) {
+            payload.webpage = res[0].result
             // Push the fake page
             setMessages((m) => {
               m.push({
