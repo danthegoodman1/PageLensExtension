@@ -21,8 +21,6 @@ export default function ListChats({ onNewChat, onSelectChat, onNewModel, reloadC
   const { models, reloadModels, setActiveChat } = useApp()
 
   useEffect(() => {
-    reloadModels()
-    reloadChats()
     setActiveChat(undefined)
   }, [])
 

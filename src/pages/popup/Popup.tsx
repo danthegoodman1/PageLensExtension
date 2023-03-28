@@ -7,13 +7,15 @@ import NewModel from './views/NewModel';
 import Chat from './views/Chat';
 import { ChatListItem, listChatSessions } from './chats';
 import { SignedIn, SignedOut, SignIn, SignUp } from '@clerk/clerk-react';
+import PulseLoader from 'react-spinners/PulseLoader';
 
 export default function Popup(): JSX.Element {
 
-  const { view, setView, models, activeChat, setActiveChat } = useApp()
+  const { view, setView, models, activeChat, setActiveChat, reloadModels } = useApp()
   const [chats, setChats] = useState<ChatListItem[] | undefined>(undefined)
   const [email, setEmail] = useState("")
   const [emailInput, setEmailInput] = useState("")
+  const [loading, setLoading] = useState(true)
   const [showSignUp, setShowSignUp] = useState(false)
   const [disabled, setDisabled] = useState(false)
 
@@ -55,9 +57,41 @@ export default function Popup(): JSX.Element {
     })()
   }, [])
 
+  useEffect(() => {
+    (async () => {
+      try {
+        await reloadModels()
+        const chats = await reloadChats()
+        if (chats) {
+          const tabs = await Browser.tabs.query({active: true, lastFocusedWindow: true})
+          const c = chats.find((c) => c.session.url.split("?")[0] === tabs[0].url!.split('?')[0])
+          if (tabs[0] && tabs[0].url && !!c) {
+            setActiveChat({
+              modelInstanceID: c.session.model_instance_id,
+              sessionID: c.session.id
+            })
+            setView("chat")
+          }
+        }
+      } catch (error) {
+        throw error
+      } finally {
+        setLoading(false)
+      }
+    })()
+  }, [])
+
+  useEffect(() => {
+    if (view === "list chats" && !loading) {
+      reloadChats()
+      reloadModels()
+    }
+  }, [view])
+
   async function reloadChats() {
     const c = await listChatSessions()
     setChats(c)
+    return c
   }
 
   function handleNewChat(modelInstanceID?: string) {
@@ -88,9 +122,20 @@ export default function Popup(): JSX.Element {
   }
 
   return (
-    <div className="flex grow w-screen h-screen">
+    <div className="flex grow w-screen h-screen overflow-y-scroll">
       {/* <SignedIn> */}
-      {!!email && <>
+      {loading && <>
+        <div className='w-full h-full flex flex-col justify-center items-center align-middle'>
+          <p>Loading <PulseLoader
+                color={"black"}
+                loading={true}
+                size={8}
+                aria-label="Loading Spinner"
+                data-testid="loader"
+              /></p>
+        </div>
+      </>}
+      {!!email && !loading && <>
         {view === "list chats" && <ListChats chats={chats} reloadChats={reloadChats} onNewModel={handleNewModel} onSelectChat={handleOpenChat} onNewChat={handleNewChat} />}
         {view === "new model" && <NewModel models={models} onSetView={(v) => setView(v)} />}
         {view === "chat" && <Chat session={chats?.find((c) => c.session.id === activeChat?.sessionID)?.session} />}
