@@ -430,16 +430,21 @@ export default function Chat(props: { session?: ChatSession }) {
                   <Tooltip.Root>
                     <Tooltip.Trigger asChild>
                       <button onClick={() => handleSend()} className={`text-sm flex gap-2 justify-center cursor-pointer select-none items-center align-middle py-2 pl-5 pr-3 ${buttonDisabled ? "bg-gray-500" : "bg-black"} ${highlighted ? "text-[#fce7ac]" : "text-white"} font-bold rounded-l-lg border-r-[1px] border-white border-solid`}>
-                        {/* {highlighted && <Edit3 stroke="white" size={12} />} */}
                         {realButtonMode === "withpage" ? "Send with Page" : "Send"}
-                        <SendIcon fill={highlighted ? "#fce7ac" : "white"} />
+                        {/* <SendIcon fill={highlighted ? "#fce7ac" : "white"} /> */}
+                        <div className="flex gap-1 items-center text-lg">
+                        {/* <kbd className="-mb-[2px] p-2 rounded-md bg-gray-600">⌘</kbd> */}
+                        <kbd className="px-1.5 py-[1px] text-sm font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded-lg">⌘ ↩</kbd>
+                        {/* <p className="text-small font-light">+</p>
+                        <kbd className="px-1.5 py-0.5 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded-lg">↩</kbd> */}
+                        </div>
                       </button>
                     </Tooltip.Trigger>
                     <Tooltip.Portal>
-                      <Tooltip.Content className="TooltipContent border-solid border-2 border-black bg-white rounded-md p-1" sideOffset={5}>
+                      {highlighted && <Tooltip.Content className="TooltipContent border-solid border-2 border-black bg-white rounded-md p-1" sideOffset={5}>
                           Will include highligted content!
                         <Tooltip.Arrow className="TooltipArrow fill-black" />
-                      </Tooltip.Content>
+                      </Tooltip.Content>}
                     </Tooltip.Portal>
                   </Tooltip.Root>
                 </Tooltip.Provider>
@@ -457,7 +462,7 @@ export default function Chat(props: { session?: ChatSession }) {
                   <DropdownMenu.Portal>
                     <DropdownMenu.Content>
                       <DropdownMenu.Item
-                        className="focus-none ring-0"
+                        className="!focus:ring-0 !focus:ring-offset-0"
                         onSelect={() => {
                           setTargetButtonMode("withpage")
                         }}
@@ -471,7 +476,7 @@ export default function Chat(props: { session?: ChatSession }) {
                         </div>
                       </DropdownMenu.Item>
                       <DropdownMenu.Item
-                        className="focus-none"
+                        className="!focus:ring-0 !focus:ring-offset-0"
                         onSelect={() => {
                           setTargetButtonMode("plain")
                         }}
