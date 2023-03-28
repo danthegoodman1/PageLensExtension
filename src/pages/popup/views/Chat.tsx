@@ -377,7 +377,7 @@ export default function Chat(props: { session?: ChatSession }) {
                       </Tooltip.Trigger>
                       <Tooltip.Portal>
                         <Tooltip.Content className="TooltipContent border-solid border-2 border-black bg-white rounded-md p-1" sideOffset={5}>
-                            <p>{(m.meta.highlight as string).length < 40 ? m.meta.highlight : (m.meta.highlight as string).slice(0, 40) + "..." }</p>
+                            {(m.meta.highlight as string).length < 40 ? m.meta.highlight : (m.meta.highlight as string).slice(0, 40) + "..." }
                           <Tooltip.Arrow className="TooltipArrow fill-black" />
                         </Tooltip.Content>
                       </Tooltip.Portal>
