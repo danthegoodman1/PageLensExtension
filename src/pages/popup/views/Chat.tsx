@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { ArrowLeft, ChevronDown, Copy, Edit3 } from "react-feather"
 import useWebSocket, { ReadyState } from 'react-use-websocket'
-import Browser, { Tabs } from "webextension-polyfill"
+import Browser from "webextension-polyfill"
 import * as Tooltip from "@radix-ui/react-tooltip"
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import ReactMarkdown from "react-markdown"
@@ -12,7 +12,6 @@ import PulseLoader from "react-spinners/PulseLoader"
 import { ChatMessage, ChatSession, getChatSession } from "../chats"
 import SendIcon from "../Components/SendIcon"
 import { useApp } from "../Context"
-import { PageRequest, PageResponse } from "@src/pages/content"
 
 const socketAPI = import.meta.env.VITE_SOCKET_API
 
@@ -366,7 +365,26 @@ export default function Chat(props: { session?: ChatSession }) {
             }
             return (
               <div key={i} className="my-2 px-1 bg-gray-50 border-solid border-black border-2">
-                <strong className="font-bold">{m.author === "user" ? "user" : model.name}</strong>: <Md>{m.message}</Md> @ {m.created_at}
+                <div className="flex flex-row gap-1 items-center">
+                  <strong className="font-bold">{m.author === "user" ? "user" : model.name}:</strong>
+                  {m.meta?.highlight && <Tooltip.Provider delayDuration={300}>
+                    <Tooltip.Root>
+                      <Tooltip.Trigger>
+                        <div className="flex items-center gap-1 cursor-default">
+                          <Edit3 stroke="black" size={10} />
+                          <p className="text-gray-500">(highlighted)</p>
+                        </div>
+                      </Tooltip.Trigger>
+                      <Tooltip.Portal>
+                        <Tooltip.Content className="TooltipContent border-solid border-2 border-black bg-white rounded-md p-1" sideOffset={5}>
+                            <p>{(m.meta.highlight as string).length < 40 ? m.meta.highlight : (m.meta.highlight as string).slice(0, 40) + "..." }</p>
+                          <Tooltip.Arrow className="TooltipArrow fill-black" />
+                        </Tooltip.Content>
+                      </Tooltip.Portal>
+                    </Tooltip.Root>
+                  </Tooltip.Provider>}
+                </div>
+                <Md>{m.message}</Md> @ {m.created_at}
               </div>
             )
           })}
