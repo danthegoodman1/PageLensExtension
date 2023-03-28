@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { ArrowLeft, ChevronDown, Copy } from "react-feather"
+import { ArrowLeft, ChevronDown, Copy, Edit3 } from "react-feather"
 import useWebSocket, { ReadyState } from 'react-use-websocket'
 import Browser, { Tabs } from "webextension-polyfill"
 import * as Tooltip from "@radix-ui/react-tooltip"
@@ -40,6 +40,7 @@ export default function Chat(props: { session?: ChatSession }) {
   const [showSpinner, setShowSpinner] = useState(false)
   const [session, setSession] = useState<ChatSession | undefined>(props.session)
   const [metaDown, setMetaDown] = useState(false)
+  const [highlighted, setHighlighted] = useState<string | undefined>()
 
   const [socketUrl, setSocketUrl] = useState<string | null>(null)
   const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl, {
@@ -162,7 +163,20 @@ export default function Chat(props: { session?: ChatSession }) {
       // TODO: Otherwise show it needs to be on a webpage?
 
       setInitialLoading(false)
-    })()
+    })();
+    (async () => {
+      const tab = await Browser.tabs.query({ active: true, currentWindow: true });
+      const res = await Browser.scripting.executeScript({
+        func: function getInnerText() {
+          //You can play with your DOM here or check URL against your regex
+          return window.getSelection()?.toString()
+        },
+        target: {tabId: tab[0].id!}
+      })
+      if (!!res[0].result) {
+        setHighlighted(res[0].result as string)
+      }
+    })();
   }, [])
 
   const model = models.find((m) => m.instance_id === activeChat!.modelInstanceID)!
@@ -185,7 +199,8 @@ export default function Chat(props: { session?: ChatSession }) {
           url: pageURL,
           modelInstanceID: model.instance_id,
           sessionID: session?.id || activeChat?.sessionID,
-          title: pageTitle
+          title: pageTitle,
+          meta: {}
         }
         const tab = await Browser.tabs.query({ active: true, currentWindow: true });
         if (realButtonMode === "withpage") {
@@ -193,7 +208,6 @@ export default function Chat(props: { session?: ChatSession }) {
           const res = await Browser.scripting.executeScript({
             func: function getInnerText() {
               //You can play with your DOM here or check URL against your regex
-              console.log('Tab script:');
               return document.body.innerText
             },
             target: {tabId: tab[0].id!}
@@ -218,23 +232,16 @@ export default function Chat(props: { session?: ChatSession }) {
               })
               return m
             })
-            payload.meta = {
-              title: pageTitle
-            }
+            payload.meta!.title = pageTitle
           } else {
             console.error("did not get page content!")
             // TODO: handle error better
           }
         }
 
-        const res = await Browser.scripting.executeScript({
-          func: function getInnerText() {
-            //You can play with your DOM here or check URL against your regex
-            console.log('Tab script:');
-            return window.getSelection()?.toString()
-          },
-          target: {tabId: tab[0].id!}
-        })
+        if (!!highlighted) {
+          payload.meta!.highlight = highlighted
+        }
 
         // Push this message to messages
         setMessages((m) => {
@@ -249,7 +256,7 @@ export default function Chat(props: { session?: ChatSession }) {
             updated_at: new Date().toISOString(),
             vote: null,
             meta: {
-              highlight: !!res[0].result ? res[0].result : undefined
+              highlight: highlighted
             }
           })
           return m
@@ -400,11 +407,24 @@ export default function Chat(props: { session?: ChatSession }) {
               })} id="comment" rows={3} className="w-full resize-none focus:outline-none px-0 text-sm font-medium text-gray-900 bg-white border-0 focus:ring-0" placeholder="Ask a question" required></textarea>
             </div>
             <div className="flex items-center justify-end px-2 pt-1 pb-2">
-              <div className="flex pl-0 sm:pl-2">
-                <button onClick={() => handleSend()} className={`text-sm flex gap-2 justify-center cursor-pointer select-none items-center align-middle py-2 pl-5 pr-3 ${buttonDisabled ? "bg-gray-500" : "bg-black"} text-white font-bold rounded-l-lg border-r-[1px] border-white border-solid`}>
-                  {realButtonMode === "withpage" ? "Send with Page" : "Send"}
-                  <SendIcon />
-                </button>
+              <div className="flex relative pl-0 sm:pl-2">
+                <Tooltip.Provider delayDuration={100}>
+                  <Tooltip.Root>
+                    <Tooltip.Trigger asChild>
+                      <button onClick={() => handleSend()} className={`text-sm flex gap-2 justify-center cursor-pointer select-none items-center align-middle py-2 pl-5 pr-3 ${buttonDisabled ? "bg-gray-500" : "bg-black"} ${highlighted ? "text-[#fce7ac]" : "text-white"} font-bold rounded-l-lg border-r-[1px] border-white border-solid`}>
+                        {/* {highlighted && <Edit3 stroke="white" size={12} />} */}
+                        {realButtonMode === "withpage" ? "Send with Page" : "Send"}
+                        <SendIcon fill={highlighted ? "#fce7ac" : "white"} />
+                      </button>
+                    </Tooltip.Trigger>
+                    <Tooltip.Portal>
+                      <Tooltip.Content className="TooltipContent border-solid border-2 border-black bg-white rounded-md p-1" sideOffset={5}>
+                          Will include highligted content!
+                        <Tooltip.Arrow className="TooltipArrow fill-black" />
+                      </Tooltip.Content>
+                    </Tooltip.Portal>
+                  </Tooltip.Root>
+                </Tooltip.Provider>
                 <DropdownMenu.Root>
                   <DropdownMenu.Trigger asChild>
                     <button
