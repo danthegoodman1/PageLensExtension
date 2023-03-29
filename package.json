@@ -9,8 +9,9 @@
     "url": "https://github.com/JohnBra/web-extension.git"
   },
   "scripts": {
-    "build": "vite build",
-    "dev": "nodemon"
+    "build": "BUILD_MODE=opensource vite build",
+    "build:chrome": "BUILD_MODE=chromestore vite build",
+    "dev": "BUILD_MODE=opensource nodemon"
   },
   "type": "module",
   "dependencies": {

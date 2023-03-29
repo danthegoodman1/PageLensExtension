@@ -21,7 +21,8 @@ export default defineConfig({
   plugins: [react(), makeManifest(), copyContentStyle()],
   publicDir,
   define: {
-    __APP_VERSION__: JSON.stringify(process.env.npm_package_version)
+    __APP_VERSION__: JSON.stringify(process.env.npm_package_version),
+    BUILD_MODE: JSON.stringify(process.env.BUILD_MODE || "chromestore") // chromestore, opensource
   },
   build: {
     outDir,

@@ -8,6 +8,7 @@ import Chat from './views/Chat';
 import { ChatListItem, listChatSessions } from './chats';
 import { SignedIn, SignedOut, SignIn, SignUp } from '@clerk/clerk-react';
 import PulseLoader from 'react-spinners/PulseLoader';
+import { getCurrentVersion } from './api';
 
 export default function Popup(): JSX.Element {
 
@@ -123,7 +124,7 @@ export default function Popup(): JSX.Element {
   }
 
   return (
-    <div className="flex grow w-screen h-screen overflow-y-scroll">
+    <div className="flex flex-col grow w-screen h-screen overflow-y-scroll">
       {/* <SignedIn> */}
       {loading && <>
         <div className='w-full h-full flex flex-col justify-center items-center align-middle'>
@@ -137,6 +138,7 @@ export default function Popup(): JSX.Element {
         </div>
       </>}
       {!!email && !loading && <>
+        <VersionCheck />
         {view === "list chats" && <ListChats chats={chats} reloadChats={reloadChats} onNewModel={handleNewModel} onSelectChat={handleOpenChat} onNewChat={handleNewChat} />}
         {view === "new model" && <NewModel models={models} onSetView={(v) => setView(v)} />}
         {view === "chat" && <Chat session={chats?.find((c) => c.session.id === activeChat?.sessionID)?.session} />}
@@ -176,4 +178,36 @@ export default function Popup(): JSX.Element {
         </div>}
     </div>
   );
+}
+
+function VersionCheck() {
+  const [currentVersion, setCurrentVersion] = useState<string | undefined>()
+
+  useEffect(() => {
+    (async () => {
+      if (BUILD_MODE === "opensource") {
+        const version = await getCurrentVersion()
+        const myParts = __APP_VERSION__.split(".")
+        const currentParts = version.split(".")
+        // God tier semver checks
+        if (
+          (myParts[0] < currentParts[0])
+          || (myParts[0] === currentParts[0] && myParts[1] < currentParts[1])
+          || (myParts[0] === currentParts[0] && myParts[1] === currentParts[1] && myParts[2] < currentParts[2])
+          ) {
+          setCurrentVersion(version)
+        }
+      }
+    })()
+  })
+
+  return (
+    <>
+      {currentVersion && <div className='w-full p-4 bg-orange-700'>
+        <p className='text-white font-semibold'>
+          Version <strong className='font-bold'>{currentVersion}</strong> available, you are running <strong className='font-bold'>{__APP_VERSION__}</strong>. Rebuild and update to ensure compatibility.
+        </p>
+      </div>}
+    </>
+  )
 }

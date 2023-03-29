@@ -25,3 +25,8 @@ export async function APIReq(path: string, method: "GET" | "POST" | "DELETE" | "
   }
   return res
 }
+
+export async function getCurrentVersion() {
+  const r = await APIReq("/extension/version", "GET")
+  return (await r.json()).current
+}
