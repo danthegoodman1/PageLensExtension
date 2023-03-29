@@ -20,6 +20,9 @@ export default defineConfig({
   },
   plugins: [react(), makeManifest(), copyContentStyle()],
   publicDir,
+  define: {
+    __APP_VERSION__: JSON.stringify(process.env.npm_package_version)
+  },
   build: {
     outDir,
     sourcemap: process.env.__DEV__ === 'true',

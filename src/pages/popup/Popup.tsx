@@ -55,6 +55,7 @@ export default function Popup(): JSX.Element {
         setEmail(res["email"])
       }
     })()
+    console.log("using extension version:", __APP_VERSION__)
   }, [])
 
   useEffect(() => {
