@@ -11,7 +11,8 @@ export async function APIReq(path: string, method: "GET" | "POST" | "DELETE" | "
   const init: RequestInit = {
     headers: {
       "content-type": "application/json",
-      "x-email": email
+      "x-email": email,
+      "x-version": __APP_VERSION__
     },
     method
   }
