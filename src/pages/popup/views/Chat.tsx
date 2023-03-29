@@ -366,7 +366,7 @@ export default function Chat(props: { session?: ChatSession }) {
             return (
               <div key={i} className="my-2 px-1 bg-gray-50 border-solid border-black border-2">
                 <div className="flex flex-row gap-1 items-center">
-                  <strong className="font-bold">{m.author === "user" ? "user" : model.name}:</strong>
+                  <strong className="font-bold">{m.author === "user" ? "You" : model.name}:</strong>
                   {m.meta?.highlight && <Tooltip.Provider delayDuration={300}>
                     <Tooltip.Root>
                       <Tooltip.Trigger>
