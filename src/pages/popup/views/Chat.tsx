@@ -65,6 +65,11 @@ export default function Chat(props: { session?: ChatSession }) {
   }, [activeChat])
 
   useEffect(() => {
+    const inputElement = document.getElementById("input")
+    if (inputElement) inputElement.focus()
+  }, [])
+
+  useEffect(() => {
     if (lastMessage) {
       const msg = JSON.parse(lastMessage.data) as WebSocketMessage
       console.log("got websocket message", msg)
@@ -422,7 +427,7 @@ export default function Chat(props: { session?: ChatSession }) {
                 if (e.key === "Meta") {
                   setMetaDown(false)
                 }
-              })} id="comment" rows={3} className="w-full resize-none focus:outline-none px-0 text-sm font-medium text-gray-900 bg-white border-0 focus:ring-0" placeholder="Ask a question" required></textarea>
+              })} id="input" rows={3} className="w-full resize-none focus:outline-none px-0 text-sm font-medium text-gray-900 bg-white border-0 focus:ring-0" placeholder="Ask a question" required></textarea>
             </div>
             <div className="flex items-center justify-end px-2 pt-1 pb-2">
               <div className="flex relative pl-0 sm:pl-2">
