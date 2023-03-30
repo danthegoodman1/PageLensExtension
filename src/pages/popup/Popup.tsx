@@ -53,6 +53,7 @@ export default function Popup(): JSX.Element {
     (async () => {
       const res = await Browser.storage.local.get("email")
       if (res["email"]) {
+        console.log("found local email")
         setEmail(res["email"])
       }
     })()
@@ -81,7 +82,7 @@ export default function Popup(): JSX.Element {
         setLoading(false)
       }
     })()
-  }, [])
+  }, [email])
 
   useEffect(() => {
     if (view === "list chats" && !loading) {
