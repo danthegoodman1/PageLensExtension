@@ -125,7 +125,7 @@ export default function Popup(): JSX.Element {
   }
 
   return (
-    <div className="flex flex-col grow w-screen h-screen overflow-y-scroll">
+    <div className="flex flex-col grow w-screen h-screen overflow-y-auto">
       {/* <SignedIn> */}
       {loading && <>
         <div className='w-full h-full flex flex-col justify-center items-center align-middle'>
