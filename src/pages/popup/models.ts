@@ -67,9 +67,9 @@ export interface Model {
   updated_at: Date
 }
 
-export async function getModels(): Promise<Model[]> {
+export async function getModels(token: string): Promise<Model[]> {
   console.log("getting models")
-  const models: { models: Model[] } = await (await APIReq("/models", "GET")).json()
+  const models: { models: Model[] } = await (await APIReq(token, "/models", "GET")).json()
   return models.models || []
 }
 
@@ -79,13 +79,6 @@ interface PutModelReq {
   name: string
 }
 
-export async function putModel(model: PutModelReq) {
-  await APIReq("/models", "POST", JSON.stringify(model))
-}
-
-export async function removeModel(modelName: string) {
-  const models: Record<string, Model[]> = {
-    "models": (await getModels()).filter((model) => model.name  !== modelName)
-  }
-  await Browser.storage.local.set(models)
+export async function putModel(token: string, model: PutModelReq) {
+  await APIReq(token, "/models", "POST", JSON.stringify(model))
 }

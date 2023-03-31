@@ -51,14 +51,22 @@
     "@babel/helper-validator-identifier" "^7.19.1"
     "to-fast-properties" "^2.0.0"
 
-"@clerk/clerk-js@^4.32.7":
-  "integrity" "sha512-DUmAbq+8giw5Xl7Im7hXucx2zYEakJyESPdfi0wcfBj5IF6LfRQN0ibWoj3oOtbdtnHTS0DiM5P7anqnq0sK/Q=="
-  "resolved" "https://registry.npmjs.org/@clerk/clerk-js/-/clerk-js-4.32.7.tgz"
-  "version" "4.32.7"
+"@clerk/chrome-extension@^0.2.0":
+  "integrity" "sha512-FeBa3wfDuP9jcq87QqEmHxPIubSOKnjOzM5/iPbUUewH5ctnTjvmw96XB1HpuJa3SlHIcWvLP2RSYW/UMKKM9w=="
+  "resolved" "https://registry.npmjs.org/@clerk/chrome-extension/-/chrome-extension-0.2.0.tgz"
+  "version" "0.2.0"
   dependencies:
-    "@clerk/localizations" "^1.7.5"
-    "@clerk/shared" "^0.13.6"
-    "@clerk/types" "^3.31.2"
+    "@clerk/clerk-js" "^4.35.0"
+    "@clerk/clerk-react" "^4.14.1"
+
+"@clerk/clerk-js@^4.32.7", "@clerk/clerk-js@^4.35.0":
+  "integrity" "sha512-ECxSKioUfaCdvfDL/OuqGHZPLE98ybDMgJt+qzTYTCT03YP6a2+7/ozori+KHpfusg/Jl3A6KaPNVFK72JRYKA=="
+  "resolved" "https://registry.npmjs.org/@clerk/clerk-js/-/clerk-js-4.35.0.tgz"
+  "version" "4.35.0"
+  dependencies:
+    "@clerk/localizations" "^1.9.1"
+    "@clerk/shared" "^0.15.1"
+    "@clerk/types" "^3.33.0"
     "@emotion/cache" "11.10.5"
     "@emotion/react" "11.10.5"
     "@floating-ui/react" "0.19.0"
@@ -70,32 +78,32 @@
     "qs" "6.11.0"
     "regenerator-runtime" "0.13.11"
 
-"@clerk/clerk-react@^4.12.9":
-  "integrity" "sha512-wSR7iA+NO2+cydd3Z6rd37vKrxSESreUvtyUALPNXNpde8sMr0U4zpFbvMFnXlgBGQgsOuZXDkPofBBacMlrzw=="
-  "resolved" "https://registry.npmjs.org/@clerk/clerk-react/-/clerk-react-4.12.9.tgz"
-  "version" "4.12.9"
+"@clerk/clerk-react@^4.14.1":
+  "integrity" "sha512-ecgIj6qrkdaLQjtRQd1O38RIGFlwiPp1g/E7y6+8q7pNsFfQQh53swqHE6J7P/yt4BUpTuIdFEJwajQrspqAUg=="
+  "resolved" "https://registry.npmjs.org/@clerk/clerk-react/-/clerk-react-4.14.1.tgz"
+  "version" "4.14.1"
   dependencies:
-    "@clerk/shared" "^0.13.6"
-    "@clerk/types" "^3.31.2"
+    "@clerk/shared" "^0.15.1"
+    "@clerk/types" "^3.33.0"
     "swr" "1.3.0"
     "tslib" "2.4.1"
 
-"@clerk/localizations@^1.7.5":
-  "integrity" "sha512-AI5qxzQMNCKDExW6AfHtJI58/p0WcXJGXz0zaOzER5pi7NrZE53s09fNYNEcUFgHcv5MH4ggD16vo71xVSNOUg=="
-  "resolved" "https://registry.npmjs.org/@clerk/localizations/-/localizations-1.7.5.tgz"
-  "version" "1.7.5"
+"@clerk/localizations@^1.9.1":
+  "integrity" "sha512-OV8z9UJ053+yvwBp6+c3+wPTUoiIY7EpQrzWlmDFlojw60DFLwl6ppmFwv4nSQsNebzMT/uYmEFqWEXQexvCOg=="
+  "resolved" "https://registry.npmjs.org/@clerk/localizations/-/localizations-1.9.1.tgz"
+  "version" "1.9.1"
   dependencies:
-    "@clerk/types" "^3.31.2"
+    "@clerk/types" "^3.33.0"
 
-"@clerk/shared@^0.13.6":
-  "integrity" "sha512-ORFNY6+rwTx6yQVQMftx1SriWL6LBbk6Qvd5723rg0KA1J+oBwr7Y4c9SWIWEph+n/KGFNo69StEKJKxeMmfYA=="
-  "resolved" "https://registry.npmjs.org/@clerk/shared/-/shared-0.13.6.tgz"
-  "version" "0.13.6"
+"@clerk/shared@^0.15.1":
+  "integrity" "sha512-C1Oou0Ksz5pxtJ8cMqx/XT2mVjJksQjV/OmPgvv5koGOuZowZA4yH+gEpwUOb16z7tKQkoRYZ4BO8DebGutkGQ=="
+  "resolved" "https://registry.npmjs.org/@clerk/shared/-/shared-0.15.1.tgz"
+  "version" "0.15.1"
 
-"@clerk/types@^3.31.2":
-  "integrity" "sha512-KUc22kdynQvwdge7xMObmlOtQ2gU9u9BMujsWUUay0+0T4y8YKxXhrOeixuPGmaCedz/1UHQvXR06nvp7vAqVQ=="
-  "resolved" "https://registry.npmjs.org/@clerk/types/-/types-3.31.2.tgz"
-  "version" "3.31.2"
+"@clerk/types@^3.33.0":
+  "integrity" "sha512-AjiDfA5NgjKAOFguEPYpaCyNSlwGy/7xKXB6pY9EofvKJjEiSiTXHtfsXMHmi8S3bhv26ryg9lyJGltLZfzHIQ=="
+  "resolved" "https://registry.npmjs.org/@clerk/types/-/types-3.33.0.tgz"
+  "version" "3.33.0"
   dependencies:
     "csstype" "3.1.1"
 
@@ -588,6 +596,11 @@
   "version" "1.0.0"
   dependencies:
     "@babel/runtime" "^7.13.10"
+
+"@remix-run/router@1.5.0":
+  "integrity" "sha512-bkUDCp8o1MvFO+qxkODcbhSqRa6P2GXgrGZVpt0dCXNW2HCSCqYI0ZoAqEOSAjRWmmlKcYgFvN4B4S+zo/f8kg=="
+  "resolved" "https://registry.npmjs.org/@remix-run/router/-/router-1.5.0.tgz"
+  "version" "1.5.0"
 
 "@sentry-internal/tracing@7.45.0":
   "integrity" "sha512-0aIDY2OvUX7k2XHaimOlWkboXoQvJ9dEKvfpu0Wh0YxfUTGPa+wplUdg3WVdkk018sq1L11MKmj4MPZyYUvXhw=="
@@ -3138,7 +3151,7 @@
   "resolved" "https://registry.npmjs.org/quick-lru/-/quick-lru-5.1.1.tgz"
   "version" "5.1.1"
 
-"react-dom@^16.0.0 || ^17.0.0 || ^18.0.0", "react-dom@^16.8 || ^17.0 || ^18.0", "react-dom@^18.2.0", "react-dom@>= 18.0.0", "react-dom@>=16.8.0":
+"react-dom@^16.0.0 || ^17.0.0 || ^18.0.0", "react-dom@^16.8 || ^17.0 || ^18.0", "react-dom@^18.2.0", "react-dom@>= 18.0.0", "react-dom@>=16.8", "react-dom@>=16.8.0":
   "integrity" "sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g=="
   "resolved" "https://registry.npmjs.org/react-dom/-/react-dom-18.2.0.tgz"
   "version" "18.2.0"
@@ -3203,6 +3216,21 @@
     "use-callback-ref" "^1.3.0"
     "use-sidecar" "^1.1.2"
 
+"react-router-dom@^6.10.0":
+  "integrity" "sha512-E5dfxRPuXKJqzwSe/qGcqdwa18QiWC6f3H3cWXM24qj4N0/beCIf/CWTipop2xm7mR0RCS99NnaqPNjHtrAzCg=="
+  "resolved" "https://registry.npmjs.org/react-router-dom/-/react-router-dom-6.10.0.tgz"
+  "version" "6.10.0"
+  dependencies:
+    "@remix-run/router" "1.5.0"
+    "react-router" "6.10.0"
+
+"react-router@6.10.0":
+  "integrity" "sha512-Nrg0BWpQqrC3ZFFkyewrflCud9dio9ME3ojHCF/WLsprJVzkq3q3UeEhMCAW1dobjeGbWgjNn/PVF6m46ANxXQ=="
+  "resolved" "https://registry.npmjs.org/react-router/-/react-router-6.10.0.tgz"
+  "version" "6.10.0"
+  dependencies:
+    "@remix-run/router" "1.5.0"
+
 "react-spinners@^0.13.8":
   "integrity" "sha512-3e+k56lUkPj0vb5NDXPVFAOkPC//XyhKPJjvcGjyMNPWsBKpplfeyialP74G7H7+It7KzhtET+MvGqbKgAqpZA=="
   "resolved" "https://registry.npmjs.org/react-spinners/-/react-spinners-0.13.8.tgz"
@@ -3233,7 +3261,7 @@
   "resolved" "https://registry.npmjs.org/react-use-websocket/-/react-use-websocket-4.3.1.tgz"
   "version" "4.3.1"
 
-"react@^16.0.0 || ^17.0.0 || ^18.0.0", "react@^16.11.0 || ^17.0.0 || ^18.0.0", "react@^16.8 || ^17.0 || ^18.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^18.2.0", "react@>= 0.14.0", "react@>= 18.0.0", "react@>=16", "react@>=16.8.0", "react@>=16.8.6", "react@>=18", "react@15.x || 16.x || 17.x || 18.x":
+"react@^16.0.0 || ^17.0.0 || ^18.0.0", "react@^16.11.0 || ^17.0.0 || ^18.0.0", "react@^16.8 || ^17.0 || ^18.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^18.2.0", "react@>= 0.14.0", "react@>= 18.0.0", "react@>=16", "react@>=16.8", "react@>=16.8.0", "react@>=16.8.6", "react@>=18", "react@15.x || 16.x || 17.x || 18.x":
   "integrity" "sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ=="
   "resolved" "https://registry.npmjs.org/react/-/react-18.2.0.tgz"
   "version" "18.2.0"

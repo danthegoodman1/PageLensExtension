@@ -2,13 +2,15 @@ import Browser from 'webextension-polyfill';
 import { useEffect, useState } from 'react';
 
 import ListChats from './views/ListChats';
-import { useApp } from './Context';
+import { AppContextProvider, useApp } from './Context';
 import NewModel from './views/NewModel';
 import Chat from './views/Chat';
 import { ChatListItem, listChatSessions } from './chats';
-import { SignedIn, SignedOut, SignIn, SignUp } from '@clerk/clerk-react';
+import { ClerkProvider, SignedIn, SignedOut, SignIn, SignUp, useAuth, useClerk } from '@clerk/chrome-extension';
 import PulseLoader from 'react-spinners/PulseLoader';
 import { getCurrentVersion } from './api';
+import { useNavigate, Routes, Route } from 'react-router-dom'
+import * as Sentry from "@sentry/react"
 
 export default function Popup(): JSX.Element {
 
@@ -19,6 +21,10 @@ export default function Popup(): JSX.Element {
   const [loading, setLoading] = useState(true)
   const [showSignUp, setShowSignUp] = useState(false)
   const [disabled, setDisabled] = useState(false)
+
+  const { getToken, userId } = useAuth()
+
+  const navigate = useNavigate()
 
   const sendMsg = async () => {
     let queryOptions = { active: true, currentWindow: true };
@@ -50,15 +56,23 @@ export default function Popup(): JSX.Element {
   }
 
   useEffect(() => {
-    (async () => {
-      const res = await Browser.storage.local.get("email")
-      if (res["email"]) {
-        console.log("found local email")
-        setEmail(res["email"])
-      }
-    })()
+    // (async () => {
+    //   const res = await Browser.storage.local.get("email")
+    //   if (res["email"]) {
+    //     console.log("found local email")
+    //     setEmail(res["email"])
+    //   }
+    // })()
     console.log("using extension version:", __APP_VERSION__)
   }, [])
+
+  useEffect(() => {
+    if (userId) {
+      Sentry.setUser({
+        userID: userId,
+      })
+    }
+  }, [userId])
 
   useEffect(() => {
     (async () => {
@@ -92,7 +106,11 @@ export default function Popup(): JSX.Element {
   }, [view])
 
   async function reloadChats() {
-    const c = await listChatSessions()
+    const token = await getToken()
+    if (!token) {
+      throw new Error("missing clerk token!")
+    }
+    const c = await listChatSessions(token)
     setChats(c)
     return c
   }
@@ -126,57 +144,61 @@ export default function Popup(): JSX.Element {
 
   return (
     <div className="flex flex-col grow w-screen h-screen overflow-y-auto">
-      {/* <SignedIn> */}
-      {loading && <>
-        <div className='w-full h-full flex flex-col justify-center items-center align-middle'>
-          <p>Loading <PulseLoader
-                color={"black"}
-                loading={true}
-                size={8}
-                aria-label="Loading Spinner"
-                data-testid="loader"
-              /></p>
-        </div>
-      </>}
-      {!!email && !loading && <>
-        <VersionCheck />
-        {view === "list chats" && <ListChats chats={chats} reloadChats={reloadChats} onNewModel={handleNewModel} onSelectChat={handleOpenChat} onNewChat={handleNewChat} />}
-        {view === "new model" && <NewModel models={models} onSetView={(v) => setView(v)} />}
-        {view === "chat" && <Chat session={chats?.find((c) => c.session.id === activeChat?.sessionID)?.session} />}
-      </>}
-      {/* </SignedIn> */}
-
-      {/* <SignedOut>
-        <div className="flex flex-col gap-4 w-screen h-screen justify-center items-center align-middle">
-            {!showSignUp && <>
-              <SignIn appearance={{
-                elements: {
-                  footerAction__signIn: "hidden",
-                  formButtonPrimary: "bg-black text-white hover:border-solid hover:border-2 hover:bg-white hover:text-black hover:border-black"
-                }
-              }} afterSignInUrl="#" />
-              <button onClick={() => setShowSignUp(true)} className='font-medium text-black no-underline'>No account? Sign up</button>
-            </>}
-            {showSignUp && <>
-              <SignUp afterSignUpUrl="#" appearance={{
-                elements: {
-                  footerAction__signUn: "hidden",
-                  formButtonPrimary: "bg-black text-white hover:border-solid hover:border-2 hover:bg-white hover:text-black hover:border-black"
-                }
-              }} />
-              <button onClick={() => setShowSignUp(false)} className='font-medium text-black no-underline'>Already have an account? Sign in</button>
-            </>}
+      <Routes>
+        <Route path='/signup/*' element={
+          <div className="flex flex-col gap-4 w-screen h-screen justify-center items-center align-middle">
+            <SignUp afterSignUpUrl={null} appearance={{
+              elements: {
+                // footerAction__signUn: "hidden",
+                formButtonPrimary: "bg-black text-white hover:border-solid hover:border-2 hover:bg-white hover:text-black hover:border-black"
+              }
+            }} signInUrl='/' />
           </div>
-        </SignedOut> */}
+        } />
+        <Route path="/" element={
+          <>
+            <SignedOut>
+              <div className="flex flex-col gap-4 w-screen h-screen justify-center items-center align-middle">
+                <SignIn appearance={{
+                  elements: {
+                    // footerAction__signIn: "hidden",
+                    formButtonPrimary: "bg-black text-white hover:border-solid hover:border-2 hover:bg-white hover:text-black hover:border-black"
+                  }
+                }} signUpUrl='/signup' afterSignInUrl={"/"} />
+              </div>
+            </SignedOut>
+            <SignedIn>
+              {loading && <>
+                <div className='w-full h-full flex flex-col justify-center items-center align-middle'>
+                  <p>Loading <PulseLoader
+                        color={"black"}
+                        loading={true}
+                        size={8}
+                        aria-label="Loading Spinner"
+                        data-testid="loader"
+                      /></p>
+                </div>
+              </>}
+              {!loading && <>
+                <VersionCheck />
+                {view === "list chats" && <ListChats chats={chats} reloadChats={reloadChats} onNewModel={handleNewModel} onSelectChat={handleOpenChat} onNewChat={handleNewChat} />}
+                {view === "new model" && <NewModel models={models} onSetView={(v) => setView(v)} />}
+                {view === "chat" && <Chat session={chats?.find((c) => c.session.id === activeChat?.sessionID)?.session} />}
+              </>}
+            </SignedIn>
+          </>
+        }>
+        </Route>
+      </Routes>
 
-        {!email && <div>
+        {/* {!email && <div>
           <input value={emailInput} onChange={(e) => {
             setEmailInput(e.target.value)
           }} type="email" id="table-search" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-slate-900 focus:border-slate-900 block w-full p-2.5" placeholder="Email" />
           <button disabled={disabled} onClick={() => handleEmailLogin()} className={`text-sm flex gap-2 justify-center cursor-pointer select-none items-center align-middle py-2 px-5 ${disabled ? "bg-gray-500" : "bg-black"} text-white font-bold rounded-lg border-white border-solid`}>
             Login
           </button>
-        </div>}
+        </div>} */}
     </div>
   );
 }

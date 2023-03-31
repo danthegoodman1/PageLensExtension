@@ -2,6 +2,7 @@
 import { useState, createContext, useContext, useEffect } from 'react';
 import Browser from 'webextension-polyfill';
 import { getModels, Model } from './models';
+import { useAuth } from '@clerk/clerk-react';
 
 export type Platform = 'twitch' | 'multi';
 
@@ -31,9 +32,14 @@ const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
 	const [models, setModels] = useState<Model[]>([])
 	const [activeChat, setActiveChat] = useState<ActiveChat | undefined>(undefined)
 	const [targetBtnMode, setTargetBtnMode] = useState<AppContextType["targetBtnMode"]>("withpage")
+	const { getToken } = useAuth()
 
   async function loadStoredModels() {
-    const stored = await getModels()
+		const token = await getToken()
+		if (!token) {
+			throw new Error("missing token!")
+		}
+    const stored = await getModels(token)
     setModels(stored)
   }
 
