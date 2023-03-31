@@ -26,14 +26,14 @@ export interface ChatMessage {
 
 export interface ChatListItem { session: ChatSession, message?: ChatMessage }
 
-export async function listChatSessions(offset?: string): Promise<ChatListItem[]> {
+export async function listChatSessions(token: string, offset?: string): Promise<ChatListItem[]> {
   console.log("listing chat sessions")
-  const res = await (await APIReq(`/chat${offset ? 'offset='+encodeURIComponent(offset) : ''}`, "GET", undefined)).json()
+  const res = await (await APIReq(token, `/chat${offset ? 'offset='+encodeURIComponent(offset) : ''}`, "GET", undefined)).json()
   return res.sessions || []
 }
 
 
-export async function getChatSession(sessionID: string): Promise<ChatMessage[]> {
-  const res = await (await APIReq(`/chat/${encodeURIComponent(sessionID)}`, "GET", undefined)).json()
+export async function getChatSession(token: string, sessionID: string): Promise<ChatMessage[]> {
+  const res = await (await APIReq(token, `/chat/${encodeURIComponent(sessionID)}`, "GET", undefined)).json()
   return res.messages || []
 }

@@ -12,6 +12,7 @@ import PulseLoader from "react-spinners/PulseLoader"
 import { ChatMessage, ChatSession, getChatSession } from "../chats"
 import SendIcon from "../Components/SendIcon"
 import { useApp } from "../Context"
+import { useAuth } from "@clerk/clerk-react"
 
 const socketAPI = import.meta.env.VITE_SOCKET_API
 
@@ -46,6 +47,8 @@ export default function Chat(props: { session?: ChatSession }) {
     // reconnectAttempts: 5,
     // retryOnError: true,
   })
+
+  const { getToken } = useAuth()
 
   const [pageURL, setPageURL] = useState(props.session?.url || "")
   const [pageTitle, setPageTitle] = useState(props.session?.title || "")
@@ -133,7 +136,11 @@ export default function Chat(props: { session?: ChatSession }) {
     (async () => {
       if (activeChat?.sessionID) {
         console.log("got a session for this chat")
-        const m = await getChatSession(activeChat.sessionID)
+        const token = await getToken()
+        if (!token) {
+          throw new Error("missing token!")
+        }
+        const m = await getChatSession(token, activeChat.sessionID)
         setMessages(m)
       } else {
         // Put an initial message int here
@@ -372,22 +379,26 @@ export default function Chat(props: { session?: ChatSession }) {
               <div key={i} className="my-2 px-1 bg-gray-50 border-solid border-black border-2">
                 <div className="flex flex-row gap-1 items-center">
                   <strong className="font-bold">{m.author === "user" ? "You" : model.name}:</strong>
-                  {m.meta?.highlight && <Tooltip.Provider delayDuration={300}>
-                    <Tooltip.Root>
-                      <Tooltip.Trigger>
-                        <div className="flex items-center gap-1 cursor-default">
-                          <Edit3 stroke="black" size={10} />
-                          <p className="text-gray-500">(highlighted)</p>
-                        </div>
-                      </Tooltip.Trigger>
-                      <Tooltip.Portal>
-                        <Tooltip.Content className="TooltipContent border-solid border-2 border-black bg-white rounded-md p-1" sideOffset={5}>
-                            {(m.meta.highlight as string).length < 40 ? m.meta.highlight : (m.meta.highlight as string).slice(0, 40) + "..." }
-                          <Tooltip.Arrow className="TooltipArrow fill-black" />
-                        </Tooltip.Content>
-                      </Tooltip.Portal>
-                    </Tooltip.Root>
-                  </Tooltip.Provider>}
+                  <>
+                    {m.meta?.highlight && <Tooltip.Provider delayDuration={300}>
+                      <Tooltip.Root>
+                        <Tooltip.Trigger>
+                          <div className="flex items-center gap-1 cursor-default">
+                            <Edit3 stroke="black" size={10} />
+                            <p className="text-gray-500">(highlighted)</p>
+                          </div>
+                        </Tooltip.Trigger>
+                        <Tooltip.Portal>
+                          <Tooltip.Content className="TooltipContent border-solid border-2 border-black bg-white rounded-md p-1" sideOffset={5}>
+                            <>
+                              {(m.meta.highlight as string).length < 40 ? m.meta.highlight : (m.meta.highlight as string).slice(0, 40) + "..." }
+                            </>
+                            <Tooltip.Arrow className="TooltipArrow fill-black" />
+                          </Tooltip.Content>
+                        </Tooltip.Portal>
+                      </Tooltip.Root>
+                    </Tooltip.Provider>}
+                  </>
                 </div>
                 <Md>{m.message}</Md> @ {m.created_at}
               </div>
